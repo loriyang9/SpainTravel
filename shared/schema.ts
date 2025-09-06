@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, date, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, date, jsonb, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -89,3 +89,20 @@ export type InsertTravelReminder = z.infer<typeof insertTravelReminderSchema>;
 export type TravelReminder = typeof travelReminders.$inferSelect;
 export type InsertWeatherData = z.infer<typeof insertWeatherDataSchema>;
 export type WeatherData = typeof weatherData.$inferSelect;
+
+// Cache table for AI-generated descriptions
+export const descriptionsCache = pgTable("descriptions_cache", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  dayNumber: integer("day_number").notNull(),
+  dataHash: text("data_hash").notNull(), // MD5 hash of input data
+  generatedDescription: text("generated_description").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertDescriptionsCacheSchema = createInsertSchema(descriptionsCache).omit({
+  id: true,
+});
+
+export type DescriptionsCache = typeof descriptionsCache.$inferSelect;
+export type InsertDescriptionsCache = z.infer<typeof insertDescriptionsCacheSchema>;

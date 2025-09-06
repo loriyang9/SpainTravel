@@ -1,10 +1,14 @@
 import { google } from 'googleapis';
+import OpenAI from 'openai';
+import crypto from 'crypto';
 
 // Google Sheets configuration
 const SPREADSHEET_ID = '1V5NSXukzD5z2m-07AhcMkU6fWEPchO4lIN8KzpI7Lwo';
 
 class GoogleSheetsService {
   private sheets: any;
+  private openai: OpenAI | null;
+  private descriptionsCache: Map<string, { description: string; timestamp: number }>;
 
   constructor() {
     try {
@@ -16,6 +20,15 @@ class GoogleSheetsService {
       });
 
       this.sheets = google.sheets({ version: 'v4', auth });
+      
+      // Initialize OpenAI client if API key is available
+      this.openai = process.env.OPENAI_API_KEY ? new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY
+      }) : null;
+      
+      // In-memory cache for descriptions
+      this.descriptionsCache = new Map();
+      
     } catch (error) {
       console.error('Failed to initialize Google Sheets service:', error);
       throw error;
@@ -144,18 +157,18 @@ class GoogleSheetsService {
       }
 
       // Convert groups to day objects, merging with DailyItinerary data
-      Object.keys(dayGroups).forEach(dayNumStr => {
+      for (const dayNumStr of Object.keys(dayGroups)) {
         const dayNumber = parseInt(dayNumStr);
         const activities = dayGroups[dayNumber];
         const overview = dailyOverviews[dayNumber] || {};
         
-        if (activities.length === 0) return;
+        if (activities.length === 0) continue;
 
         const dayData: any = {
           dayNumber,
           date: overview.date || activities[0].date || '',
           title: overview.theme || this.extractDayTitle(activities), // Use Theme from DailyItinerary
-          description: this.generateDaySummary(dayNumber, overview.theme || '', overview.city || '', activities, totalDays),
+          description: await this.generateDaySummary(dayNumber, overview.theme || '', overview.city || '', activities, totalDays),
           city: overview.city || '', // Use City from DailyItinerary only
           activities: activities.map(act => ({
             time: act.time || '全天',
@@ -175,7 +188,7 @@ class GoogleSheetsService {
         };
 
         result.push(dayData);
-      });
+      }
 
       return result.sort((a, b) => a.dayNumber - b.dayNumber);
     } catch (error) {
@@ -218,10 +231,24 @@ class GoogleSheetsService {
     return maxDay;
   }
 
-  private generateDaySummary(dayNumber: number, theme: string, city: string, activities: any[], totalDays: number): string {
-    const mainActivities = activities.slice(0, 2).map(act => act.title).filter(Boolean);
+  // Create data hash for cache key
+  private createDataHash(dayNumber: number, theme: string, city: string, activities: any[]): string {
+    const dataString = JSON.stringify({ dayNumber, theme, city, activities });
+    return crypto.createHash('md5').update(dataString).digest('hex');
+  }
+
+  // Generate AI-powered description with caching
+  private async generateDaySummary(dayNumber: number, theme: string, city: string, activities: any[], totalDays: number): Promise<string> {
+    // Create cache key
+    const dataHash = this.createDataHash(dayNumber, theme, city, activities);
     
-    // Generate summary based on day number and content
+    // Check in-memory cache first
+    const cached = this.descriptionsCache.get(dataHash);
+    if (cached && Date.now() - cached.timestamp < 24 * 60 * 60 * 1000) { // 24 hours cache
+      return cached.description;
+    }
+    
+    // Special cases with fixed templates
     if (dayNumber === 0) {
       return `準備出發，整理行李並前往機場，開始${totalDays}天西班牙深度旅行冒險`;
     }
@@ -230,30 +257,84 @@ class GoogleSheetsService {
       return `完成西班牙旅程，帶著滿滿回憶返回台灣，結束難忘的深度之旅`;
     }
     
-    // For regular days, combine theme, city, and main activities
-    let summary = '';
+    // Try AI generation if available
+    if (this.openai) {
+      try {
+        const description = await this.generateAIDescription(dayNumber, theme, city, activities);
+        // Cache the result
+        this.descriptionsCache.set(dataHash, {
+          description,
+          timestamp: Date.now()
+        });
+        return description;
+      } catch (error) {
+        console.warn('AI generation failed, falling back to template:', error.message);
+      }
+    }
+    
+    // Fallback to template-based generation (without length limit)
+    return this.generateTemplateDescription(dayNumber, theme, city, activities);
+  }
+  
+  // AI-powered description generation
+  private async generateAIDescription(dayNumber: number, theme: string, city: string, activities: any[]): Promise<string> {
+    const mainActivities = activities.slice(0, 3).map(act => act.title).filter(Boolean);
+    
+    const prompt = `為一個西班牙旅遊行程的第${dayNumber}天生成一個生動、吸引人的40-60字中文描述。
+
+行程資訊：
+- 主題：${theme}
+- 城市：${city}
+- 主要活動：${mainActivities.join('、') || '探索當地文化'}
+
+要求：
+1. 使用生動、感性的語言
+2. 突出當天的特色和亮點
+3. 讓讀者感受到西班牙的魅力
+4. 40-60個中文字符
+5. 不要使用省略號或截斷
+6. 語氣要充滿期待和興奮
+
+範例風格：「漫步在巴薩隆納的蘭布拉大道，探訪高第的建築奇蹟聖家堂，在哥德區的石板路上感受中世紀的浪漫，品嚐道地的加泰隆尼亞美食，讓藝術與歷史在每個轉角與你相遇」`;
+    
+    // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+    const response = await this.openai!.chat.completions.create({
+      model: "gpt-5",
+      messages: [
+        {
+          role: "system",
+          content: "你是一個專業的旅遊文案寫手，擅長用優美的中文描述旅遊體驗，讓讀者充滿期待。"
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 200,
+      temperature: 0.7
+    });
+    
+    return response.choices[0]?.message?.content?.trim() || this.generateTemplateDescription(dayNumber, theme, city, activities);
+  }
+  
+  // Template-based fallback generation (no length limit)
+  private generateTemplateDescription(dayNumber: number, theme: string, city: string, activities: any[]): string {
+    const mainActivities = activities.slice(0, 2).map(act => act.title).filter(Boolean);
     
     if (theme && city) {
       if (mainActivities.length > 0) {
         const activityText = mainActivities.join('、');
-        summary = `在${city}${theme}，${activityText}，感受西班牙的魅力`;
+        return `在${city}${theme}，${activityText}，感受西班牙的魅力與文化深度`;
       } else {
-        summary = `在${city}體驗${theme}，探索西班牙獨特的文化與風情`;
+        return `在${city}體驗${theme}，探索西班牙獨特的文化與風情，留下難忘回憶`;
       }
     } else if (city) {
-      summary = `探索${city}的迷人景色，品味當地文化與美食的精彩體驗`;
+      return `探索${city}的迷人景色，品味當地文化與美食的精彩體驗，感受伊比利亞半島的魅力`;
     } else if (theme) {
-      summary = `${theme}，深度體驗西班牙的歷史文化與自然風光`;
+      return `${theme}，深度體驗西班牙的歷史文化與自然風光，創造屬於自己的旅行故事`;
     } else {
-      summary = `精彩的西班牙旅程，探索當地獨特的文化與美景`;
+      return `精彩的西班牙旅程，探索當地獨特的文化與美景，在每個角落發現驚喜`;
     }
-    
-    // Ensure summary is around 30 characters
-    if (summary.length > 35) {
-      summary = summary.substring(0, 32) + '...';
-    }
-    
-    return summary;
   }
 
   private extractCityFromString(text: string): string {
