@@ -36,12 +36,72 @@ class GoogleSheetsService {
     }
   }
 
-  // Parse Activities sheet data (vertical format)
+  // Parse DailyItinerary sheet data (horizontal format) 
+  async getDailyItineraryOverview() {
+    try {
+      const data = await this.getSheetData('DailyItinerary');
+      if (!data || data.length === 0) return {};
+
+      const headers = data[0]; // First row contains dayNumbers (0, 1, 2, ...)
+      const dayOverviews: { [key: number]: any } = {};
+
+      // Skip first empty column, process each day
+      for (let col = 1; col < headers.length; col++) {
+        const dayNumber = parseInt(headers[col]);
+        if (isNaN(dayNumber)) continue;
+
+        const dayData: any = { dayNumber };
+        
+        // Map each row to properties
+        for (let row = 1; row < data.length; row++) {
+          const rowHeader = data[row][0];
+          const cellValue = data[row][col] || '';
+
+          switch (rowHeader) {
+            case 'Date':
+              dayData.date = cellValue;
+              break;
+            case 'Theme':
+              dayData.theme = cellValue;
+              break;
+            case 'City':
+              dayData.city = cellValue;
+              break;
+            case 'accommodation':
+              dayData.accommodation = cellValue;
+              break;
+            case 'breakfast':
+              dayData.breakfast = cellValue;
+              break;
+            case 'lunch':
+              dayData.lunch = cellValue;
+              break;
+            case 'dinner':
+              dayData.dinner = cellValue;
+              break;
+          }
+        }
+
+        dayOverviews[dayNumber] = dayData;
+      }
+
+      return dayOverviews;
+    } catch (error) {
+      console.warn('DailyItinerary sheet not found, using Activities data only');
+      return {};
+    }
+  }
+
+  // Parse Activities sheet data (vertical format) and merge with DailyItinerary
   async getDailyItinerary() {
     try {
-      const data = await this.getSheetData('Activities');
+      // Get both data sources
+      const [activitiesData, dailyOverviews] = await Promise.all([
+        this.getSheetData('Activities'),
+        this.getDailyItineraryOverview()
+      ]);
       
-      if (!data || data.length < 2) {
+      if (!activitiesData || activitiesData.length < 2) {
         return [];
       }
 
@@ -49,8 +109,8 @@ class GoogleSheetsService {
       const dayGroups: { [key: number]: any[] } = {};
 
       // Group activities by dayNumber
-      for (let row = 1; row < data.length; row++) {
-        const rowData = data[row];
+      for (let row = 1; row < activitiesData.length; row++) {
+        const rowData = activitiesData[row];
         if (!rowData || rowData.length === 0) continue;
 
         // Create activity object using index mapping
@@ -77,19 +137,20 @@ class GoogleSheetsService {
         dayGroups[dayNumber].push(activity);
       }
 
-      // Convert groups to day objects
+      // Convert groups to day objects, merging with DailyItinerary data
       Object.keys(dayGroups).forEach(dayNumStr => {
         const dayNumber = parseInt(dayNumStr);
         const activities = dayGroups[dayNumber];
+        const overview = dailyOverviews[dayNumber] || {};
         
         if (activities.length === 0) return;
 
         const dayData: any = {
           dayNumber,
-          date: activities[0].date || '',
-          title: this.extractDayTitle(activities),
-          description: this.extractDayTitle(activities),
-          city: this.extractCity(activities),
+          date: overview.date || activities[0].date || '',
+          title: overview.theme || this.extractDayTitle(activities), // Use Theme from DailyItinerary
+          description: overview.theme || this.extractDayTitle(activities),
+          city: overview.city || this.extractCity(activities),
           activities: activities.map(act => ({
             time: act.time || '全天',
             name: act.title || '活動',
@@ -99,12 +160,12 @@ class GoogleSheetsService {
           })),
           estimatedDuration: `${activities.length}個活動`,
           meals: {
-            breakfast: '',
-            lunch: '',
-            dinner: ''
+            breakfast: overview.breakfast || '',
+            lunch: overview.lunch || '',
+            dinner: overview.dinner || ''
           },
-          accommodation: '',
-          imageUrl: this.getDefaultImageUrl(this.extractCity(activities))
+          accommodation: overview.accommodation || '',
+          imageUrl: this.getDefaultImageUrl(overview.city || this.extractCity(activities))
         };
 
         result.push(dayData);
@@ -112,7 +173,7 @@ class GoogleSheetsService {
 
       return result.sort((a, b) => a.dayNumber - b.dayNumber);
     } catch (error) {
-      console.error('Error parsing activities:', error);
+      console.error('Error parsing daily itinerary:', error);
       throw error;
     }
   }
