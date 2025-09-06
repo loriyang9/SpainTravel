@@ -99,10 +99,6 @@ const AttractionCard = ({
               <MapPin className="w-4 h-4 mr-1" />
               {city}
             </span>
-            <span className="flex items-center" data-testid={`ticket-${id}`}>
-              <Ticket className="w-4 h-4 mr-1" />
-              {ticketRequired}
-            </span>
           </div>
           <Button
             variant="ghost"
