@@ -3,11 +3,16 @@ import { Link, useLocation } from "wouter";
 import { Sun, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useScrollSpy } from "@/hooks/useScrollSpy";
 
 const Navigation = () => {
   const [location] = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Scroll spy for homepage sections
+  const homeSections = ['hero', 'itinerary-preview', 'attractions-preview', 'reminders-preview'];
+  const activeSection = useScrollSpy({ sections: homeSections, offset: 150 });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,13 +24,19 @@ const Navigation = () => {
   }, []);
 
   const navItems = [
-    { href: "/", label: "首頁", testId: "nav-home" },
-    { href: "/itinerary", label: "每日行程", testId: "nav-itinerary" },
-    { href: "/attractions", label: "重要景點", testId: "nav-attractions" },
-    { href: "/reminders", label: "旅遊提醒", testId: "nav-reminders" },
+    { href: "/", label: "首頁", testId: "nav-home", section: "hero" },
+    { href: "/itinerary", label: "每日行程", testId: "nav-itinerary", section: "itinerary-preview" },
+    { href: "/attractions", label: "重要景點", testId: "nav-attractions", section: "attractions-preview" },
+    { href: "/reminders", label: "旅遊提醒", testId: "nav-reminders", section: "reminders-preview" },
   ];
 
-  const isActive = (href: string) => {
+  const isActive = (href: string, section?: string) => {
+    // If we're on homepage, use scroll spy
+    if (location === "/" && section) {
+      return activeSection === section;
+    }
+    
+    // For other pages, use route-based highlighting
     if (href === "/" && location === "/") return true;
     if (href !== "/" && location.startsWith(href)) return true;
     return false;
@@ -52,7 +63,7 @@ const Navigation = () => {
             <Link key={item.href} href={item.href} data-testid={item.testId}>
               <span
                 className={`text-foreground hover:text-primary transition-colors cursor-pointer ${
-                  isActive(item.href) ? "text-primary font-semibold" : ""
+                  isActive(item.href, item.section) ? "text-primary font-semibold" : ""
                 }`}
               >
                 {item.label}
@@ -93,7 +104,7 @@ const Navigation = () => {
                 <Link key={item.href} href={item.href} data-testid={`mobile-${item.testId}`}>
                   <span
                     className={`block py-2 px-4 text-lg text-foreground hover:text-primary hover:bg-accent/20 rounded-lg transition-colors cursor-pointer ${
-                      isActive(item.href) ? "text-primary font-semibold bg-accent/20" : ""
+                      isActive(item.href, item.section) ? "text-primary font-semibold bg-accent/20" : ""
                     }`}
                     onClick={() => setIsOpen(false)}
                   >
