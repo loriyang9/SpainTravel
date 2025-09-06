@@ -108,29 +108,10 @@ const TravelReminders = () => {
         </div>
 
 
-        {/* Filter */}
-        <div className="mb-8 p-6 bg-card rounded-lg shadow-lg">
-          <div className="flex items-center space-x-4">
-            <Filter className="w-5 h-5 text-muted-foreground" />
-            <span className="font-medium">優先級篩選：</span>
-            <select
-              value={selectedPriority}
-              onChange={(e) => setSelectedPriority(e.target.value)}
-              className="px-3 py-2 bg-background border border-input rounded-md text-foreground"
-              data-testid="priority-filter"
-            >
-              {priorities.map(priority => (
-                <option key={priority} value={priority}>
-                  {priority === "全部" ? "全部優先級" : `優先級 ${priority}`}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
 
         {/* Reminders Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="reminders-grid">
-          {filteredReminders.map((reminder) => (
+          {travelReminders.map((reminder) => (
             <div key={reminder.id} className="bg-card rounded-xl p-6 shadow-lg card-hover">
               {/* Priority Badge */}
               <div className="flex items-center justify-between mb-4">
