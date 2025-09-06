@@ -1,4 +1,4 @@
-import { Clock, Ticket, Camera } from "lucide-react";
+import { MapPin, Ticket, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -95,9 +95,9 @@ const AttractionCard = ({
         
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <span className="flex items-center" data-testid={`duration-${id}`}>
-              <Clock className="w-4 h-4 mr-1" />
-              參觀時間：{visitDuration}
+            <span className="flex items-center" data-testid={`city-${id}`}>
+              <MapPin className="w-4 h-4 mr-1" />
+              {city}
             </span>
             <span className="flex items-center" data-testid={`ticket-${id}`}>
               <Ticket className="w-4 h-4 mr-1" />
