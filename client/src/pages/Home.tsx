@@ -48,9 +48,6 @@ const Home = () => {
             Golden Moment
             <span className="block text-4xl md:text-6xl text-primary">Autumn Journey</span>
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-12 animate-slide-up">
-            探索西班牙的黃金時光，感受秋日的浪漫與熱情
-          </p>
           
           {/* Countdown Timers */}
           <div className="grid md:grid-cols-2 gap-8 mb-12" data-testid="countdown-section">
