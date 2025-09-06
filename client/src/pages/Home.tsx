@@ -103,8 +103,24 @@ const Home = () => {
     return selectedAttractions.slice(0, 6); // 確保只返回6個
   }, [itinerary, attractionsData, actualTripDays]);
   
-  // Only show "出發前準備" reminder
-  const previewReminders = remindersData ? remindersData.filter(reminder => reminder.title === "出發前準備") : [];
+  // Show selected reminders for preview
+  const targetReminders = ["出發前準備", "防盜安全", "天氣與穿著", "關於時間"];
+  const previewReminders = remindersData ? 
+    remindersData
+      .filter(reminder => targetReminders.includes(reminder.title))
+      .map(reminder => {
+        // For non-preparation reminders, limit to first 2 segments
+        if (reminder.title !== "出發前準備") {
+          const limitedItems = reminder.items.map(item => {
+            const segments = item.text.split('\n').filter(line => line.trim());
+            const firstTwoSegments = segments.slice(0, 2).join('\n');
+            return { ...item, text: firstTwoSegments };
+          });
+          return { ...reminder, items: limitedItems };
+        }
+        return reminder;
+      })
+      .sort((a, b) => targetReminders.indexOf(a.title) - targetReminders.indexOf(b.title)) : [];
   
   // Carousel setup for itinerary preview
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
@@ -319,7 +335,7 @@ const Home = () => {
             <p className="text-lg text-muted-foreground">重要注意事項與實用旅遊貼士</p>
           </div>
           
-          <div className="grid grid-cols-1 gap-8 mb-8 max-w-2xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
             {previewReminders.map((reminder) => (
               <ReminderCard
                 key={reminder.id}
