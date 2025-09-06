@@ -48,6 +48,12 @@ const KeyAttractions = () => {
         return "博物館";
       case "park":
         return "藝術公園";
+      case "shopping":
+        return "購物景點";
+      case "food":
+        return "美食餐廳";
+      case "attraction":
+        return "一般景點";
       default:
         return "全部";
     }

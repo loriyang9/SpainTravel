@@ -434,15 +434,57 @@ class GoogleSheetsService {
   }
 
   private mapCategory(category: string): string {
+    if (!category) return 'attraction';
+    
     const categoryMap: { [key: string]: string } = {
       '世界遺產': 'world_heritage',
       '建築': 'architecture',
       '博物館': 'museum',
       '公園': 'park',
       '教堂': 'architecture',
-      '宮殿': 'architecture'
+      '宮殿': 'architecture',
+      // 新增更多可能的分類詞彙
+      '景點': 'attraction',
+      '建築景點': 'architecture',
+      '文化遺產': 'world_heritage',
+      '藝術': 'museum',
+      '市場': 'attraction',
+      '廣場': 'attraction',
+      '購物': 'shopping',
+      '自然': 'park',
+      '歷史': 'world_heritage',
+      '宗教': 'architecture',
+      '美術館': 'museum',
+      '藝術館': 'museum',
+      '古城': 'world_heritage',
+      '古蹟': 'world_heritage',
+      // 新增 Google Sheets 中實際的分類
+      '餐廳與小酒館': 'food',
+      '早餐／早午餐': 'food',
+      '精品咖啡／咖啡館': 'food',
+      '小店': 'shopping',
+      '步道': 'park',
+      '餐廳': 'food',
+      '咖啡': 'food',
+      '咖啡館': 'food',
+      '酒館': 'food'
     };
-    return categoryMap[category] || 'attraction';
+    
+    // 先檢查完全匹配
+    if (categoryMap[category]) {
+      return categoryMap[category];
+    }
+    
+    // 檢查包含關係
+    const cleanCategory = category.trim().toLowerCase();
+    for (const [key, value] of Object.entries(categoryMap)) {
+      if (cleanCategory.includes(key) || key.includes(cleanCategory)) {
+        return value;
+      }
+    }
+    
+    console.log(`未匹配的景點分類: "${category}"`);
+    return 'attraction';
   }
 
   private getAttractionImageUrl(name: string): string {
