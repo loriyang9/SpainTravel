@@ -107,37 +107,6 @@ const TravelReminders = () => {
           <p className="text-lg text-muted-foreground">重要注意事項與實用旅遊貼士</p>
         </div>
 
-        {/* Progress Overview */}
-        <div className="mb-8 p-6 bg-card rounded-lg shadow-lg">
-          <h3 className="text-xl font-semibold mb-4 flex items-center">
-            📋 準備進度總覽
-          </h3>
-          <div className="grid md:grid-cols-4 gap-4 mb-4">
-            <div className="text-center p-4 bg-primary/10 rounded-lg" data-testid="total-items">
-              <div className="text-2xl font-bold text-primary">{getTotalItems()}</div>
-              <div className="text-sm text-muted-foreground">總項目數</div>
-            </div>
-            <div className="text-center p-4 bg-chart-1/10 rounded-lg" data-testid="completed-items">
-              <div className="text-2xl font-bold text-chart-1">{getCheckedItems()}</div>
-              <div className="text-sm text-muted-foreground">已完成項目</div>
-            </div>
-            <div className="text-center p-4 bg-chart-2/10 rounded-lg" data-testid="remaining-items">
-              <div className="text-2xl font-bold text-chart-2">{getTotalItems() - getCheckedItems()}</div>
-              <div className="text-sm text-muted-foreground">待完成項目</div>
-            </div>
-            <div className="text-center p-4 bg-chart-3/10 rounded-lg" data-testid="completion-percentage">
-              <div className="text-2xl font-bold text-chart-3">{getCompletionPercentage()}%</div>
-              <div className="text-sm text-muted-foreground">完成度</div>
-            </div>
-          </div>
-          <div className="w-full bg-muted rounded-full h-3">
-            <div 
-              className="bg-primary h-3 rounded-full transition-all duration-300" 
-              style={{ width: `${getCompletionPercentage()}%` }}
-              data-testid="progress-bar"
-            ></div>
-          </div>
-        </div>
 
         {/* Filter */}
         <div className="mb-8 p-6 bg-card rounded-lg shadow-lg">
