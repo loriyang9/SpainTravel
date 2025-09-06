@@ -44,9 +44,7 @@ const Home = () => {
         </div>
         
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 font-serif animate-fade-in">
-            Golden Moment
-          </h1>
+          <h1 className="md:text-7xl font-bold text-white mb-6 font-serif animate-fade-in text-[50px] text-center">Golden Moment, Autumn Journey</h1>
           
           {/* Countdown Timer - Dynamic */}
           <div className="mb-12 flex justify-center" data-testid="countdown-section">
@@ -77,10 +75,8 @@ const Home = () => {
           </Button>
         </div>
       </section>
-
       {/* Today's Highlights */}
       <TodayHighlights />
-
       {/* Itinerary Preview */}
       <section id="itinerary-preview" className="py-16 px-6 bg-background" data-testid="itinerary-preview-section">
         <div className="max-w-7xl mx-auto">
@@ -120,7 +116,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
       {/* Attractions Showcase */}
       <section id="attractions-preview" className="py-16 px-6 bg-card" data-testid="attractions-preview-section">
         <div className="max-w-7xl mx-auto">
@@ -161,7 +156,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
       {/* Travel Reminders Preview */}
       <section id="reminders-preview" className="py-16 px-6 bg-background" data-testid="reminders-preview-section">
         <div className="max-w-7xl mx-auto">
@@ -198,7 +192,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
       {/* Footer */}
       <footer className="bg-secondary text-secondary-foreground py-12 px-6" data-testid="footer">
         <div className="max-w-7xl mx-auto">
