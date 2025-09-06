@@ -112,12 +112,6 @@ const KeyAttractions = () => {
               <div className="text-2xl font-bold text-primary">{attractions.length}</div>
               <div className="text-sm text-muted-foreground">總景點數</div>
             </div>
-            <div className="text-center p-4 bg-chart-1/10 rounded-lg" data-testid="world-heritage-count">
-              <div className="text-2xl font-bold text-chart-1">
-                {attractions.filter(a => a.category === "world_heritage").length}
-              </div>
-              <div className="text-sm text-muted-foreground">世界遺產</div>
-            </div>
             <div className="text-center p-4 bg-chart-2/10 rounded-lg" data-testid="cities-count">
               <div className="text-2xl font-bold text-chart-2">
                 {new Set(attractions.map(a => a.city)).size}
