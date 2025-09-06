@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, MapPin, Clock, Ticket, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,11 @@ const KeyAttractions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("全部");
   const [selectedCategory, setSelectedCategory] = useState("全部");
+  
+  // 頁面載入時自動滾動到頂部
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const { data: attractions, isLoading } = useQuery<Attraction[]>({
     queryKey: ['/api/attractions'],
@@ -109,7 +114,7 @@ const KeyAttractions = () => {
         <div className="mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             <div className="text-center p-6 bg-primary/10 rounded-lg" data-testid="total-attractions">
-              <div className="text-3xl font-bold text-primary">{attractions.length}</div>
+              <div className="text-3xl font-bold text-primary">{attractions?.length || 0}</div>
               <div className="text-sm text-muted-foreground">總景點數</div>
             </div>
             <div className="text-center p-6 bg-chart-3/10 rounded-lg" data-testid="filtered-count">
@@ -130,8 +135,8 @@ const KeyAttractions = () => {
                 city={attraction.city}
                 category={attraction.category}
                 description={attraction.description}
-                additionalInfo={attraction.additionalInfo}
-                imageUrl={attraction.imageUrl}
+                additionalInfo={Array.isArray(attraction.highlights) ? attraction.highlights.join(', ') : undefined}
+                imageUrl={attraction.imageUrl || 'https://via.placeholder.com/400x300?text=景點圖片'}
               />
             ))}
           </div>

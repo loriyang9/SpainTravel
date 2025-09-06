@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Check, AlertTriangle, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,11 @@ import type { TravelReminder } from "@shared/schema";
 const TravelReminders = () => {
   const [selectedPriority, setSelectedPriority] = useState("全部");
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+  
+  // 頁面載入時自動滾動到頂部
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const { data: reminders, isLoading } = useQuery<TravelReminder[]>({
     queryKey: ['/api/reminders'],

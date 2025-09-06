@@ -18,6 +18,11 @@ const DailyItinerary = () => {
     }
   }, [dayNumber]);
   
+  // 頁面載入時自動滾動到頂部
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const { data: itinerary, isLoading } = useQuery<ItineraryDay[]>({
     queryKey: ['/api/itinerary'],
   });
