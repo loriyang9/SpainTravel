@@ -49,20 +49,23 @@ const Home = () => {
             <span className="block text-4xl md:text-6xl text-primary">Autumn Journey</span>
           </h1>
           
-          {/* Countdown Timers */}
-          <div className="grid md:grid-cols-2 gap-8 mb-12" data-testid="countdown-section">
-            <CountdownTimer
-              targetDate={departureDate}
-              label="出發倒數"
-              description="2025年10月5日 00:30 台北時間"
-              type="departure"
-            />
-            <CountdownTimer
-              targetDate={returnDate}
-              label="返家倒數"
-              description="2025年10月18日 22:05 西班牙時間"
-              type="return"
-            />
+          {/* Countdown Timer - Dynamic */}
+          <div className="mb-12 flex justify-center" data-testid="countdown-section">
+            {new Date() < departureDate ? (
+              <CountdownTimer
+                targetDate={departureDate}
+                label="出發倒數"
+                description="2025年10月5日 00:30 台北時間"
+                type="departure"
+              />
+            ) : (
+              <CountdownTimer
+                targetDate={returnDate}
+                label="返家倒數"
+                description="2025年10月18日 22:05 西班牙時間"
+                type="return"
+              />
+            )}
           </div>
           
           <Button 
