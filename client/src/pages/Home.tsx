@@ -161,7 +161,9 @@ const Home = () => {
             {/* Carousel */}
             <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
               <div className="flex gap-6 select-none">
-                {(itinerary || []).map((day) => (
+                {(itinerary || [])
+                  .sort((a, b) => a.dayNumber - b.dayNumber)
+                  .map((day) => (
                   <div key={day.dayNumber} className="flex-none w-80 md:w-96 h-[480px]">
                     <ItineraryCard
                       dayNumber={day.dayNumber}
