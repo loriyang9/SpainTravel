@@ -130,7 +130,7 @@ class GoogleSheetsService {
         };
 
         const dayNumber = parseInt(activity.dayNumber);
-        if (isNaN(dayNumber) || dayNumber < 1) {
+        if (isNaN(dayNumber) || dayNumber < 0) {
           continue;
         }
 
