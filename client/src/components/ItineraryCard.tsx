@@ -23,14 +23,14 @@ const ItineraryCard = ({
   onClick 
 }: ItineraryCardProps) => {
   return (
-    <div className="bg-card rounded-xl overflow-hidden shadow-lg card-hover" data-testid={`itinerary-card-day-${dayNumber}`}>
+    <div className="bg-card rounded-xl overflow-hidden shadow-lg card-hover h-full flex flex-col" data-testid={`itinerary-card-day-${dayNumber}`}>
       <img 
         src={imageUrl} 
         alt={title}
-        className="w-full h-48 object-cover"
+        className="w-full h-48 object-cover flex-shrink-0"
         loading="lazy"
       />
-      <div className="p-6">
+      <div className="p-6 flex flex-col flex-grow">
         <div className="flex items-center justify-between mb-3">
           <span 
             className={`bg-${color} text-white px-3 py-1 rounded-full text-sm font-semibold`}
@@ -45,10 +45,10 @@ const ItineraryCard = ({
         <h3 className="text-xl font-semibold mb-2 text-card-foreground" data-testid={`title-${dayNumber}`}>
           {title}
         </h3>
-        <p className="text-muted-foreground mb-4" data-testid={`description-${dayNumber}`}>
+        <p className="text-muted-foreground mb-4 flex-grow line-clamp-3 text-sm leading-relaxed" data-testid={`description-${dayNumber}`}>
           {description}
         </p>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-auto">
           <span className="text-sm text-muted-foreground flex items-center" data-testid={`duration-${dayNumber}`}>
             <Clock className="w-4 h-4 mr-1" />
             {duration}

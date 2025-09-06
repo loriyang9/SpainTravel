@@ -138,7 +138,7 @@ const Home = () => {
             <div className="overflow-hidden" ref={emblaRef}>
               <div className="flex gap-6">
                 {(itinerary || []).map((day) => (
-                  <div key={day.dayNumber} className="flex-none w-80 md:w-96">
+                  <div key={day.dayNumber} className="flex-none w-80 md:w-96 h-[480px]">
                     <ItineraryCard
                       dayNumber={day.dayNumber}
                       date={day.date || ''}
