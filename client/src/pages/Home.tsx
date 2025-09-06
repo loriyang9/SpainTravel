@@ -8,10 +8,9 @@ import AttractionCard from "@/components/AttractionCard";
 import ReminderCard from "@/components/ReminderCard";
 import { useQuery } from "@tanstack/react-query";
 import type { ItineraryDay, Attraction, TravelReminder } from "@shared/schema";
-import { attractions } from "@/data/attractions";
 import { travelReminders } from "@/data/reminders";
 import useEmblaCarousel from 'embla-carousel-react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 const Home = () => {
   const departureDate = new Date('2025-10-05T00:30:00+08:00'); // Taiwan time
@@ -23,11 +22,83 @@ const Home = () => {
     queryKey: ['/api/itinerary'],
   });
   
+  // Fetch attractions data from API
+  const { data: attractionsData } = useQuery<Attraction[]>({
+    queryKey: ['/api/attractions'],
+  });
+  
   // Calculate actual trip days (exclude Day 0)
   const actualTripDays = itinerary ? Math.max(...itinerary.filter(d => d.dayNumber > 0).map(d => d.dayNumber)) : 15;
   
-  // Get first few items for preview
-  const previewAttractions = attractions.slice(0, 4);
+  // Calculate current trip day number
+  const getCurrentTripDay = () => {
+    const now = new Date();
+    const departureTime = departureDate.getTime();
+    const currentTime = now.getTime();
+    
+    if (currentTime < departureTime) {
+      return 0; // 還未出發
+    }
+    
+    // 計算從出發到現在經過的天數
+    const daysSinceDeparture = Math.floor((currentTime - departureTime) / (24 * 60 * 60 * 1000));
+    const tripDay = daysSinceDeparture + 1; // Day 1 是第一天
+    
+    return Math.min(tripDay, actualTripDays); // 不能超過行程最大天數
+  };
+
+  // Smart attraction recommendation logic
+  const smartAttractions = useMemo(() => {
+    if (!itinerary || !attractionsData) return [];
+    
+    const currentTripDay = getCurrentTripDay();
+    
+    // Find today's itinerary
+    const todayItinerary = itinerary.find(day => day.dayNumber === currentTripDay);
+    
+    let selectedAttractions: Attraction[] = [];
+    
+    // Step 1: Get attractions from today's itinerary
+    if (todayItinerary?.activities) {
+      const activityNames = todayItinerary.activities.map((activity: any) => activity.name);
+      const todayAttractions = attractionsData.filter(attraction => 
+        activityNames.some(activityName => 
+          attraction.name.includes(activityName) || activityName.includes(attraction.name)
+        )
+      );
+      selectedAttractions.push(...todayAttractions);
+    }
+    
+    // Step 2: If not enough, add attractions from the same city with "景點" category
+    if (selectedAttractions.length < 6 && todayItinerary) {
+      const sameCityAttractions = attractionsData
+        .filter(attraction => 
+          attraction.city === todayItinerary.city && 
+          attraction.category === "景點" &&
+          !selectedAttractions.some(selected => selected.id === attraction.id)
+        )
+        .sort((a, b) => parseInt(a.id) - parseInt(b.id)); // 按ID排序
+      
+      const needed = 6 - selectedAttractions.length;
+      selectedAttractions.push(...sameCityAttractions.slice(0, needed));
+    }
+    
+    // Step 3: If still not enough, add from all "景點" category
+    if (selectedAttractions.length < 6) {
+      const allSceneryAttractions = attractionsData
+        .filter(attraction => 
+          attraction.category === "景點" &&
+          !selectedAttractions.some(selected => selected.id === attraction.id)
+        )
+        .sort((a, b) => parseInt(a.id) - parseInt(b.id)); // 按ID排序
+      
+      const needed = 6 - selectedAttractions.length;
+      selectedAttractions.push(...allSceneryAttractions.slice(0, needed));
+    }
+    
+    return selectedAttractions.slice(0, 6); // 確保只返回6個
+  }, [itinerary, attractionsData, actualTripDays]);
+  
   const previewReminders = travelReminders.slice(0, 6);
   
   // Carousel setup for itinerary preview
@@ -205,8 +276,8 @@ const Home = () => {
             <p className="text-lg text-muted-foreground">西班牙必訪的世界文化遺產與經典地標</p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            {previewAttractions.map((attraction) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+            {smartAttractions.map((attraction) => (
               <AttractionCard
                 key={attraction.id}
                 id={attraction.id}
@@ -214,10 +285,8 @@ const Home = () => {
                 city={attraction.city}
                 category={attraction.category}
                 description={attraction.description}
-                visitDuration={attraction.visitDuration}
-                ticketRequired={attraction.ticketRequired}
+                additionalInfo={attraction.additionalInfo}
                 imageUrl={attraction.imageUrl}
-                onLearnMore={(id) => {/* Navigate to detailed attraction */}}
               />
             ))}
           </div>
