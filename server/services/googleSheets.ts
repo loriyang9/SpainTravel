@@ -150,7 +150,7 @@ class GoogleSheetsService {
           date: overview.date || activities[0].date || '',
           title: overview.theme || this.extractDayTitle(activities), // Use Theme from DailyItinerary
           description: overview.theme || this.extractDayTitle(activities),
-          city: overview.city || this.extractCity(activities),
+          city: overview.city || '', // Use City from DailyItinerary only
           activities: activities.map(act => ({
             time: act.time || '全天',
             name: act.title || '活動',
