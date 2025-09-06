@@ -55,7 +55,7 @@ const KeyAttractions = () => {
             </Button>
           </Link>
           <h1 className="text-4xl font-bold text-foreground font-serif mb-4">重要景點介紹</h1>
-          <p className="text-lg text-muted-foreground">西班牙必訪的世界文化遺產與經典地標</p>
+          <p className="text-lg text-muted-foreground">你可能會想知道的景點介紹</p>
         </div>
 
         {/* Filters */}
