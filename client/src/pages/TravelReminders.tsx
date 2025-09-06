@@ -128,54 +128,72 @@ const TravelReminders = () => {
                 </h3>
               </div>
 
-              {/* Checklist Items */}
-              <ul className="space-y-3">
-                {reminder.items.map((item, index) => {
-                  const itemKey = `${reminder.id}-${index}`;
-                  const isChecked = checkedItems[itemKey] || false;
-                  
-                  return (
-                    <li key={index} className="flex items-start space-x-3" data-testid={`reminder-item-${reminder.id}-${index}`}>
-                      <Checkbox
-                        checked={isChecked}
-                        onCheckedChange={() => handleItemCheck(reminder.id, index)}
-                        className="mt-0.5"
-                        data-testid={`checkbox-${reminder.id}-${index}`}
-                      />
-                      <div 
-                        className={`text-sm ${isChecked 
-                          ? 'line-through text-muted-foreground' 
-                          : 'text-foreground'
-                        }`}
-                      >
-                        {item.text.split('\n').map((line, lineIndex) => (
-                          <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
-                            {line}
+              {/* Content */}
+              {reminder.title === "出發前準備" ? (
+                // 出發前準備：顯示checkbox
+                <>
+                  <ul className="space-y-3">
+                    {reminder.items.map((item, index) => {
+                      const itemKey = `${reminder.id}-${index}`;
+                      const isChecked = checkedItems[itemKey] || false;
+                      
+                      return (
+                        <li key={index} className="flex items-start space-x-3" data-testid={`reminder-item-${reminder.id}-${index}`}>
+                          <Checkbox
+                            checked={isChecked}
+                            onCheckedChange={() => handleItemCheck(reminder.id, index)}
+                            className="mt-0.5"
+                            data-testid={`checkbox-${reminder.id}-${index}`}
+                          />
+                          <div 
+                            className={`text-sm ${isChecked 
+                              ? 'line-through text-muted-foreground' 
+                              : 'text-foreground'
+                            }`}
+                          >
+                            {item.text.split('\n').map((line, lineIndex) => (
+                              <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
+                                {line}
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
+                        </li>
+                      );
+                    })}
+                  </ul>
 
-              {/* Progress for this card */}
-              <div className="mt-4 pt-4 border-t">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">進度</span>
-                  <span className="font-medium">
-                    {reminder.items.filter((_, index) => checkedItems[`${reminder.id}-${index}`]).length} / {reminder.items.length}
-                  </span>
+                  {/* Progress for this card */}
+                  <div className="mt-4 pt-4 border-t">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">進度</span>
+                      <span className="font-medium">
+                        {reminder.items.filter((_, index) => checkedItems[`${reminder.id}-${index}`]).length} / {reminder.items.length}
+                      </span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-primary h-2 rounded-full transition-all duration-300" 
+                        style={{ 
+                          width: `${(reminder.items.filter((_, index) => checkedItems[`${reminder.id}-${index}`]).length / reminder.items.length) * 100}%` 
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                // 其他分類：只顯示內容
+                <div className="space-y-3">
+                  {reminder.items.map((item, index) => (
+                    <div key={index} className="text-sm text-foreground" data-testid={`reminder-item-${reminder.id}-${index}`}>
+                      {item.text.split('\n').map((line, lineIndex) => (
+                        <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
+                          {line}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
                 </div>
-                <div className="w-full bg-muted rounded-full h-2 mt-2">
-                  <div 
-                    className="bg-primary h-2 rounded-full transition-all duration-300" 
-                    style={{ 
-                      width: `${(reminder.items.filter((_, index) => checkedItems[`${reminder.id}-${index}`]).length / reminder.items.length) * 100}%` 
-                    }}
-                  ></div>
-                </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
@@ -188,7 +206,7 @@ const TravelReminders = () => {
           <div className="grid md:grid-cols-2 gap-4 text-sm text-yellow-700 dark:text-yellow-300">
             <div>
               <h4 className="font-medium mb-2">出發前7天</h4>
-              <p>確認所有優先級1-2的項目都已完成，特別是證件和保險相關事項。</p>
+              <p>確認「出發前準備」的項目都已完成，特別是證件和保險相關事項。</p>
             </div>
             <div>
               <h4 className="font-medium mb-2">出發前3天</h4>
@@ -203,31 +221,6 @@ const TravelReminders = () => {
               <p>第一時間確認住宿、購買交通卡，並測試通訊設備。</p>
             </div>
           </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="mt-8 flex justify-center space-x-4">
-          <Button 
-            onClick={() => setCheckedItems({})}
-            variant="outline"
-            data-testid="reset-all"
-          >
-            重置所有項目
-          </Button>
-          <Button 
-            onClick={() => {
-              const allItems: Record<string, boolean> = {};
-              travelReminders.forEach(reminder => {
-                reminder.items.forEach((_, index) => {
-                  allItems[`${reminder.id}-${index}`] = true;
-                });
-              });
-              setCheckedItems(allItems);
-            }}
-            data-testid="mark-all-complete"
-          >
-            標記全部完成
-          </Button>
         </div>
       </div>
     </div>
