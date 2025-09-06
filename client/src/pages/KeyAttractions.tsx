@@ -39,24 +39,8 @@ const KeyAttractions = () => {
   });
 
   const getCategoryLabel = (category: string) => {
-    switch (category) {
-      case "world_heritage":
-        return "世界遺產";
-      case "architecture":
-        return "建築奇蹟";
-      case "museum":
-        return "博物館";
-      case "park":
-        return "藝術公園";
-      case "shopping":
-        return "購物景點";
-      case "food":
-        return "美食餐廳";
-      case "attraction":
-        return "一般景點";
-      default:
-        return "全部";
-    }
+    if (category === "全部") return "全部";
+    return category; // 直接使用 Google Sheet 中的原始分類名稱
   };
 
   return (

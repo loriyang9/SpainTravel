@@ -433,59 +433,6 @@ class GoogleSheetsService {
     return imageMap[city] || 'https://images.unsplash.com/photo-1504019347908-b45f9b0b8dd5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400';
   }
 
-  private mapCategory(category: string): string {
-    if (!category) return 'attraction';
-    
-    const categoryMap: { [key: string]: string } = {
-      '世界遺產': 'world_heritage',
-      '建築': 'architecture',
-      '博物館': 'museum',
-      '公園': 'park',
-      '教堂': 'architecture',
-      '宮殿': 'architecture',
-      // 新增更多可能的分類詞彙
-      '景點': 'attraction',
-      '建築景點': 'architecture',
-      '文化遺產': 'world_heritage',
-      '藝術': 'museum',
-      '市場': 'attraction',
-      '廣場': 'attraction',
-      '購物': 'shopping',
-      '自然': 'park',
-      '歷史': 'world_heritage',
-      '宗教': 'architecture',
-      '美術館': 'museum',
-      '藝術館': 'museum',
-      '古城': 'world_heritage',
-      '古蹟': 'world_heritage',
-      // 新增 Google Sheets 中實際的分類
-      '餐廳與小酒館': 'food',
-      '早餐／早午餐': 'food',
-      '精品咖啡／咖啡館': 'food',
-      '小店': 'shopping',
-      '步道': 'park',
-      '餐廳': 'food',
-      '咖啡': 'food',
-      '咖啡館': 'food',
-      '酒館': 'food'
-    };
-    
-    // 先檢查完全匹配
-    if (categoryMap[category]) {
-      return categoryMap[category];
-    }
-    
-    // 檢查包含關係
-    const cleanCategory = category.trim().toLowerCase();
-    for (const [key, value] of Object.entries(categoryMap)) {
-      if (cleanCategory.includes(key) || key.includes(cleanCategory)) {
-        return value;
-      }
-    }
-    
-    console.log(`未匹配的景點分類: "${category}"`);
-    return 'attraction';
-  }
 
   private getAttractionImageUrl(name: string): string {
     const imageMap: { [key: string]: string } = {
@@ -570,7 +517,7 @@ class GoogleSheetsService {
           name: rowData[1] || '',
           nameEn: rowData[2] || '',
           city: rowData[3] || '',
-          category: this.mapCategory(rowData[4] || ''),
+          category: rowData[4] || '其他',
           description: rowData[6] || rowData[5] || '', // 其他補充 or 重點特色
           visitDuration: '2-3小時',
           ticketRequired: '建議預訂',
@@ -582,7 +529,6 @@ class GoogleSheetsService {
           result.push(attraction);
         }
       }
-
       return result;
     } catch (error) {
       console.warn('Error fetching attractions:', error);
