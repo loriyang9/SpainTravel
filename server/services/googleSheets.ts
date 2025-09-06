@@ -543,32 +543,28 @@ class GoogleSheetsService {
       const data = await this.getSheetData('TravelReminders');
       if (!data || data.length < 2) return [];
 
+      const titles = data[0]; // 第一行是標題
+      const contents = data[1]; // 第二行是內容
       const result = [];
-      let currentCategory = '';
-      let currentPriority = 1;
 
-      for (let row = 0; row < data.length; row++) {
-        const rowData = data[row];
-        if (!rowData || rowData.length < 2) continue;
-
-        const title = rowData[0] || '';
-        const text = rowData[1] || '';
+      // 從第2列開始（跳過第1列的"title"）
+      for (let col = 1; col < titles.length && col < contents.length; col++) {
+        const title = titles[col] || '';
+        const text = contents[col] || '';
 
         if (!title || !text) continue;
 
-        // Create reminder object
+        // 創建提醒物件
         const reminder: any = {
-          id: `reminder-${row}`,
+          id: `reminder-${col}`,
           category: this.mapReminderCategory(title),
           title: title.replace('：', '').replace(':', '').trim(),
           icon: this.getReminderIcon(title),
           priority: this.getReminderPriority(title),
-          items: this.parseReminderItems(text)
+          items: [{ text: text }] // 直接使用對應列的內容
         };
 
-        if (reminder.items && reminder.items.length > 0) {
-          result.push(reminder);
-        }
+        result.push(reminder);
       }
 
       return result;
