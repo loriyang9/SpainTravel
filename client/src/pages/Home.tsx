@@ -31,7 +31,7 @@ const Home = () => {
       {/* Hero Banner */}
       <section 
         id="hero" 
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        className="relative min-h-screen pt-20 flex items-center justify-center overflow-hidden"
         data-testid="hero-section"
       >
         <div className="absolute inset-0 z-0">
