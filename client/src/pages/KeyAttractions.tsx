@@ -130,13 +130,7 @@ const KeyAttractions = () => {
                 city={attraction.city}
                 category={attraction.category}
                 description={attraction.description}
-                visitDuration={attraction.visitDuration}
-                ticketRequired={attraction.ticketRequired}
                 imageUrl={attraction.imageUrl}
-                onLearnMore={(id) => {
-                  // This would navigate to detailed attraction page
-                  console.log('Learn more about:', id);
-                }}
               />
             ))}
           </div>

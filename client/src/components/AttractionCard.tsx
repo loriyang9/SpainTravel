@@ -1,5 +1,4 @@
-import { MapPin, Ticket, Camera } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface AttractionCardProps {
@@ -8,10 +7,7 @@ interface AttractionCardProps {
   city: string;
   category: string;
   description: string;
-  visitDuration: string;
-  ticketRequired: string;
   imageUrl: string;
-  onLearnMore?: (id: string) => void;
 }
 
 const AttractionCard = ({ 
@@ -20,10 +16,7 @@ const AttractionCard = ({
   city, 
   category, 
   description, 
-  visitDuration, 
-  ticketRequired, 
-  imageUrl,
-  onLearnMore
+  imageUrl
 }: AttractionCardProps) => {
   const getCategoryColor = (category: string) => {
     // 根據 Google Sheet 原始分類設定顏色
@@ -93,21 +86,11 @@ const AttractionCard = ({
           {description}
         </p>
         
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <span className="flex items-center" data-testid={`city-${id}`}>
-              <MapPin className="w-4 h-4 mr-1" />
-              {city}
-            </span>
-          </div>
-          <Button
-            variant="ghost"
-            onClick={() => onLearnMore?.(id)}
-            className="text-primary hover:text-primary/80 font-medium"
-            data-testid={`learn-more-${id}`}
-          >
-            了解更多 →
-          </Button>
+        <div className="flex items-center text-sm text-muted-foreground">
+          <span className="flex items-center" data-testid={`city-${id}`}>
+            <MapPin className="w-4 h-4 mr-1" />
+            {city}
+          </span>
         </div>
       </div>
     </div>
