@@ -1,8 +1,42 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { z } from "zod";
+import GoogleSheetsService from "./services/googleSheets.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  const googleSheetsService = new GoogleSheetsService();
+
+  // Google Sheets API endpoints
+  app.get("/api/itinerary", async (req, res) => {
+    try {
+      const itinerary = await googleSheetsService.getDailyItinerary();
+      res.json(itinerary);
+    } catch (error) {
+      console.error("Error fetching itinerary:", error);
+      res.status(500).json({ error: "無法讀取行程資料" });
+    }
+  });
+
+  app.get("/api/attractions", async (req, res) => {
+    try {
+      const attractions = await googleSheetsService.getAttractions();
+      res.json(attractions);
+    } catch (error) {
+      console.error("Error fetching attractions:", error);
+      res.status(500).json({ error: "無法讀取景點資料" });
+    }
+  });
+
+  app.get("/api/reminders", async (req, res) => {
+    try {
+      const reminders = await googleSheetsService.getTravelReminders();
+      res.json(reminders);
+    } catch (error) {
+      console.error("Error fetching reminders:", error);
+      res.status(500).json({ error: "無法讀取提醒資料" });
+    }
+  });
+
   // Weather API endpoint
   app.get("/api/weather/:city", async (req, res) => {
     try {
