@@ -114,8 +114,8 @@ const TravelReminders = () => {
           {travelReminders.map((reminder) => (
             <div key={reminder.id} className="bg-card rounded-xl p-6 shadow-lg card-hover">
               {/* Icon and Title */}
-              <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                <div className="text-primary text-xl">
+              <div className="flex items-center mb-4">
+                <div className="text-2xl mr-3">
                   {reminder.icon === "Passport" && "🛂"}
                   {reminder.icon === "CreditCard" && "💳"}
                   {reminder.icon === "Luggage" && "🧳"}
@@ -123,11 +123,10 @@ const TravelReminders = () => {
                   {reminder.icon === "Shield" && "🛡️"}
                   {reminder.icon === "UtensilsCrossed" && "🍽️"}
                 </div>
+                <h3 className="text-xl font-semibold text-card-foreground" data-testid={`reminder-title-${reminder.id}`}>
+                  {reminder.title}
+                </h3>
               </div>
-
-              <h3 className="text-xl font-semibold mb-3 text-card-foreground" data-testid={`reminder-title-${reminder.id}`}>
-                {reminder.title}
-              </h3>
 
               {/* Checklist Items */}
               <ul className="space-y-3">
