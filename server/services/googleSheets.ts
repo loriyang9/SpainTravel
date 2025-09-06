@@ -31,121 +31,115 @@ class GoogleSheetsService {
 
       return response.data.values || [];
     } catch (error) {
-      console.error(`Error fetching data from sheet ${sheetName}:`, error);
+      console.error(`Error fetching data from sheet ${sheetName}:`, error?.message || error);
       throw error;
     }
   }
 
-  // Parse Activities sheet data (horizontal format)
+  // Parse Activities sheet data (vertical format)
   async getDailyItinerary() {
     try {
       const data = await this.getSheetData('Activities');
-      if (!data || data.length === 0) return [];
-
-      const headers = data[0]; // First row contains dayNumbers (0, 1, 2, ...)
-      const result = [];
-
-      // Skip first empty column, process each day
-      for (let col = 1; col < headers.length; col++) {
-        const dayNumber = parseInt(headers[col]);
-        if (isNaN(dayNumber)) continue;
-
-        const dayData: any = { dayNumber };
-        
-        // Map each row to properties
-        for (let row = 1; row < data.length; row++) {
-          const rowHeader = data[row][0];
-          const cellValue = data[row][col] || '';
-
-          switch (rowHeader) {
-            case 'Date':
-              dayData.date = cellValue;
-              break;
-            case 'Theme':
-              dayData.title = cellValue;
-              dayData.description = cellValue;
-              break;
-            case 'City':
-              dayData.city = cellValue.split(' ')[0]; // Extract city name before English
-              break;
-            case 'accommodation':
-              dayData.accommodation = cellValue;
-              break;
-            case 'breakfast':
-              dayData.breakfast = cellValue;
-              break;
-            case 'lunch':
-              dayData.lunch = cellValue;
-              break;
-            case 'dinner':
-              dayData.dinner = cellValue;
-              break;
-            default:
-              // Handle activity rows (detailed schedule)
-              if (rowHeader === '' && cellValue) {
-                if (!dayData.activitiesRaw) dayData.activitiesRaw = '';
-                dayData.activitiesRaw += cellValue + '\n';
-              }
-              break;
-          }
-        }
-
-        // Parse activities from raw text
-        dayData.activities = this.parseActivities(dayData.activitiesRaw || '');
-        dayData.estimatedDuration = this.calculateDuration(dayData.activities);
-        
-        // Set meals
-        dayData.meals = {
-          breakfast: dayData.breakfast || '',
-          lunch: dayData.lunch || '',
-          dinner: dayData.dinner || ''
-        };
-
-        // Add default image URL
-        dayData.imageUrl = this.getDefaultImageUrl(dayData.city);
-
-        result.push(dayData);
+      
+      if (!data || data.length < 2) {
+        return [];
       }
 
-      return result.filter(day => day.dayNumber >= 1 && day.dayNumber <= 16); // Only actual travel days
+      const result = [];
+      const dayGroups: { [key: number]: any[] } = {};
+
+      // Group activities by dayNumber
+      for (let row = 1; row < data.length; row++) {
+        const rowData = data[row];
+        if (!rowData || rowData.length === 0) continue;
+
+        // Create activity object using index mapping
+        const activity: any = {
+          dayNumber: rowData[0] || '',
+          date: rowData[1] || '',
+          time: rowData[2] || '',
+          timeZone: rowData[3] || '',
+          title: rowData[4] || '',
+          description: rowData[5] || '',
+          location: rowData[6] || '',
+          duration: rowData[7] || '',
+          notes: rowData[8] || ''
+        };
+
+        const dayNumber = parseInt(activity.dayNumber);
+        if (isNaN(dayNumber) || dayNumber < 1) {
+          continue;
+        }
+
+        if (!dayGroups[dayNumber]) {
+          dayGroups[dayNumber] = [];
+        }
+        dayGroups[dayNumber].push(activity);
+      }
+
+      // Convert groups to day objects
+      Object.keys(dayGroups).forEach(dayNumStr => {
+        const dayNumber = parseInt(dayNumStr);
+        const activities = dayGroups[dayNumber];
+        
+        if (activities.length === 0) return;
+
+        const dayData: any = {
+          dayNumber,
+          date: activities[0].date || '',
+          title: this.extractDayTitle(activities),
+          description: this.extractDayTitle(activities),
+          city: this.extractCity(activities),
+          activities: activities.map(act => ({
+            time: act.time || '全天',
+            name: act.title || '活動',
+            description: act.description || act.title || '',
+            location: act.location || '',
+            duration: act.duration || '1小時',
+          })),
+          estimatedDuration: `${activities.length}個活動`,
+          meals: {
+            breakfast: '',
+            lunch: '',
+            dinner: ''
+          },
+          accommodation: '',
+          imageUrl: this.getDefaultImageUrl(this.extractCity(activities))
+        };
+
+        result.push(dayData);
+      });
+
+      return result.sort((a, b) => a.dayNumber - b.dayNumber);
     } catch (error) {
-      console.error('Error parsing daily itinerary:', error);
+      console.error('Error parsing activities:', error);
       throw error;
     }
   }
 
-  private parseActivities(activitiesText: string) {
-    if (!activitiesText) return [];
+  private extractDayTitle(activities: any[]): string {
+    if (!activities || activities.length === 0) return '';
+    
+    // Try to find a main theme from the first activity or most detailed one
+    const mainActivity = activities.find(act => act.title && act.title.length > 10) || activities[0];
+    return mainActivity?.title || `Day ${activities[0]?.dayNumber || ''}`;
+  }
 
-    const lines = activitiesText.split('\n').filter(line => line.trim());
-    const activities = [];
-
-    for (const line of lines) {
-      const timeMatch = line.match(/^(\d{1,2}:\d{2})-?(\d{1,2}:\d{2})?/);
-      if (timeMatch) {
-        const [, startTime, endTime] = timeMatch;
-        const description = line.replace(timeMatch[0], '').trim();
-        
-        activities.push({
-          time: startTime,
-          name: description.split(' ')[0] || '活動',
-          description: description,
-          location: '',
-          duration: endTime ? this.calculateTimeDiff(startTime, endTime) : '1小時',
-        });
-      } else if (line.includes('-') && line.length > 10) {
-        // Handle lines without specific time format
-        activities.push({
-          time: '全天',
-          name: line.substring(0, 20),
-          description: line,
-          location: '',
-          duration: '2小時',
-        });
+  private extractCity(activities: any[]): string {
+    if (!activities || activities.length === 0) return '';
+    
+    // Try to extract city from location or title
+    for (const activity of activities) {
+      const location = activity.location || '';
+      if (location) {
+        // Simple city extraction logic - can be enhanced
+        if (location.includes('巴塞隆納') || location.includes('Barcelona')) return '巴薩隆納';
+        if (location.includes('馬德里') || location.includes('Madrid')) return '馬德里';
+        if (location.includes('薩拉曼卡') || location.includes('Salamanca')) return '薩拉曼卡';
+        return location.split(',')[0].split('，')[0]; // Take first part before comma
       }
     }
-
-    return activities;
+    return '';
   }
 
   private calculateTimeDiff(start: string, end: string): string {
@@ -186,76 +180,158 @@ class GoogleSheetsService {
     return imageMap[city] || 'https://images.unsplash.com/photo-1504019347908-b45f9b0b8dd5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400';
   }
 
-  // Parse Attractions sheet (if available)
+  private mapCategory(category: string): string {
+    const categoryMap: { [key: string]: string } = {
+      '世界遺產': 'world_heritage',
+      '建築': 'architecture',
+      '博物館': 'museum',
+      '公園': 'park',
+      '教堂': 'architecture',
+      '宮殿': 'architecture'
+    };
+    return categoryMap[category] || 'attraction';
+  }
+
+  private getAttractionImageUrl(name: string): string {
+    const imageMap: { [key: string]: string } = {
+      '聖家堂': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400',
+      '阿爾罕布拉宮': 'https://images.unsplash.com/photo-1539650116574-75c0c6d5adf1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400',
+      '普拉多博物館': 'https://images.unsplash.com/photo-1544986581-efac024faf62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400'
+    };
+    return imageMap[name] || 'https://images.unsplash.com/photo-1504019347908-b45f9b0b8dd5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400';
+  }
+
+  private parseHighlights(highlightText: string): string[] {
+    if (!highlightText) return [];
+    
+    // Split by common separators
+    const highlights = highlightText.split(/[,，;；\n]/)
+      .map(h => h.trim())
+      .filter(h => h.length > 0);
+    
+    return highlights.slice(0, 4); // Limit to 4 highlights
+  }
+
+  private mapReminderCategory(title: string): string {
+    if (title.includes('時間') || title.includes('營業')) return 'schedule';
+    if (title.includes('準備') || title.includes('出發')) return 'preparation';
+    if (title.includes('安全') || title.includes('防盜')) return 'safety';
+    if (title.includes('天氣') || title.includes('穿著')) return 'weather';
+    if (title.includes('食物') || title.includes('水')) return 'food';
+    if (title.includes('小費')) return 'money';
+    if (title.includes('廁所')) return 'facilities';
+    return 'general';
+  }
+
+  private getReminderIcon(title: string): string {
+    const iconMap: { [key: string]: string } = {
+      'schedule': 'Clock',
+      'preparation': 'Luggage',
+      'safety': 'Shield',
+      'weather': 'Cloud',
+      'food': 'Utensils',
+      'money': 'CreditCard',
+      'facilities': 'MapPin',
+      'general': 'Info'
+    };
+    const category = this.mapReminderCategory(title);
+    return iconMap[category] || 'Info';
+  }
+
+  private getReminderPriority(title: string): number {
+    if (title.includes('安全') || title.includes('防盜')) return 1;
+    if (title.includes('準備') || title.includes('出發')) return 2;
+    if (title.includes('時間') || title.includes('營業')) return 3;
+    return 4;
+  }
+
+  private parseReminderItems(text: string): Array<{text: string}> {
+    if (!text) return [];
+    
+    // Split by numbered lists, bullet points, or line breaks
+    const items = text.split(/\d+\.\s*|[•\-\n]/)
+      .map(item => item.trim())
+      .filter(item => item.length > 10) // Only keep substantial items
+      .slice(0, 10); // Limit items
+    
+    return items.map(item => ({ text: item }));
+  }
+
+  // Parse Attractions sheet (vertical format)
   async getAttractions() {
     try {
       const data = await this.getSheetData('Attractions');
       if (!data || data.length < 2) return [];
 
-      const headers = data[0];
+      const headers = data[0]; // 編號, 中文名稱, 英文名稱, 城市, 分類, 重點特色, 其他補充
       const result = [];
 
       for (let row = 1; row < data.length; row++) {
         const rowData = data[row];
         if (!rowData || rowData.length === 0) continue;
 
-        const attraction: any = {};
-        headers.forEach((header: string, index: number) => {
-          attraction[header] = rowData[index] || '';
-        });
+        const attraction: any = {
+          id: rowData[0] || '',
+          name: rowData[1] || '',
+          nameEn: rowData[2] || '',
+          city: rowData[3] || '',
+          category: this.mapCategory(rowData[4] || ''),
+          description: rowData[6] || rowData[5] || '', // 其他補充 or 重點特色
+          visitDuration: '2-3小時',
+          ticketRequired: '建議預訂',
+          imageUrl: this.getAttractionImageUrl(rowData[1] || ''),
+          highlights: this.parseHighlights(rowData[5] || '') // 重點特色
+        };
 
-        // Set default values
-        attraction.highlights = [
-          attraction.highlight1,
-          attraction.highlight2,
-          attraction.highlight3,
-          attraction.highlight4
-        ].filter(Boolean);
-
-        result.push(attraction);
+        if (attraction.name) {
+          result.push(attraction);
+        }
       }
 
       return result;
     } catch (error) {
-      console.warn('Attractions sheet not found, using default data');
+      console.warn('Error fetching attractions:', error);
       return [];
     }
   }
 
-  // Parse TravelReminders sheet (if available)
+  // Parse TravelReminders sheet (horizontal format)
   async getTravelReminders() {
     try {
       const data = await this.getSheetData('TravelReminders');
       if (!data || data.length < 2) return [];
 
-      const headers = data[0];
       const result = [];
+      let currentCategory = '';
+      let currentPriority = 1;
 
-      for (let row = 1; row < data.length; row++) {
+      for (let row = 0; row < data.length; row++) {
         const rowData = data[row];
-        if (!rowData || rowData.length === 0) continue;
+        if (!rowData || rowData.length < 2) continue;
 
-        const reminder: any = {};
-        headers.forEach((header: string, index: number) => {
-          reminder[header] = rowData[index] || '';
-        });
+        const title = rowData[0] || '';
+        const text = rowData[1] || '';
 
-        // Parse items
-        reminder.items = [
-          reminder.item1,
-          reminder.item2,
-          reminder.item3,
-          reminder.item4,
-          reminder.item5,
-          reminder.item6
-        ].filter(Boolean).map((text: string) => ({ text }));
+        if (!title || !text) continue;
 
-        result.push(reminder);
+        // Create reminder object
+        const reminder: any = {
+          id: `reminder-${row}`,
+          category: this.mapReminderCategory(title),
+          title: title.replace('：', '').replace(':', '').trim(),
+          icon: this.getReminderIcon(title),
+          priority: this.getReminderPriority(title),
+          items: this.parseReminderItems(text)
+        };
+
+        if (reminder.items && reminder.items.length > 0) {
+          result.push(reminder);
+        }
       }
 
       return result;
     } catch (error) {
-      console.warn('TravelReminders sheet not found, using default data');
+      console.warn('Error fetching travel reminders:', error);
       return [];
     }
   }

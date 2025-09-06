@@ -12,7 +12,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const itinerary = await googleSheetsService.getDailyItinerary();
       res.json(itinerary);
     } catch (error) {
-      console.error("Error fetching itinerary:", error);
+      console.error("Error fetching itinerary:", error?.message || error);
       res.status(500).json({ error: "無法讀取行程資料" });
     }
   });
