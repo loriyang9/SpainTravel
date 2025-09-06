@@ -46,7 +46,6 @@ const Home = () => {
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 font-serif animate-fade-in">
             Golden Moment
-            <span className="block text-4xl md:text-6xl text-primary">Autumn Journey</span>
           </h1>
           
           {/* Countdown Timer - Dynamic */}
