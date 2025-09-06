@@ -54,15 +54,29 @@ const TodayHighlights = () => {
     return 'Barcelona'; // default
   };
 
+  // Format meals display
+  const formatMeals = () => {
+    const breakfast = todayItinerary?.meals?.breakfast || "";
+    const lunch = todayItinerary?.meals?.lunch || "";
+    const dinner = todayItinerary?.meals?.dinner || "";
+    
+    const meals = [];
+    if (breakfast) meals.push(`早餐: ${breakfast}`);
+    if (lunch) meals.push(`午餐: ${lunch}`);
+    if (dinner) meals.push(`晚餐: ${dinner}`);
+    
+    return meals.length > 0 ? meals.join(" | ") : "依當地安排";
+  };
+
   const todayData: TodayHighlight = {
     departure: todayItinerary?.activities?.[0]?.time || "全天",
     departureLocation: todayItinerary?.activities?.[0]?.location || "依行程安排",
     activities: todayItinerary?.activities?.[0]?.name || todayItinerary?.title || "行程安排中",
     activitiesDetail: todayItinerary?.description || "詳細資訊請參考每日行程",
-    meals: todayItinerary?.meals?.lunch || todayItinerary?.meals?.breakfast || todayItinerary?.meals?.dinner || "依當地安排",
-    mealsDetail: "品嚐道地西班牙美食",
+    meals: formatMeals(),
+    mealsDetail: "", // 移除固定文字
     accommodation: todayItinerary?.accommodation || "旅程住宿",
-    accommodationDetail: "舒適便利的住宿安排",
+    accommodationDetail: "", // 移除固定文字
     city: extractCityFromTitle(todayItinerary?.title || "Barcelona"),
   };
 
