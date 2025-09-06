@@ -152,7 +152,7 @@ class GoogleSheetsService {
           dayNumber,
           date: overview.date || activities[0].date || '',
           title: overview.theme || this.extractDayTitle(activities), // Use Theme from DailyItinerary
-          description: overview.theme || this.extractDayTitle(activities),
+          description: this.generateDaySummary(dayNumber, overview.theme || '', overview.city || '', activities),
           city: overview.city || '', // Use City from DailyItinerary only
           activities: activities.map(act => ({
             time: act.time || '全天',
@@ -187,6 +187,44 @@ class GoogleSheetsService {
     // Try to find a main theme from the first activity or most detailed one
     const mainActivity = activities.find(act => act.title && act.title.length > 10) || activities[0];
     return mainActivity?.title || `Day ${activities[0]?.dayNumber || ''}`;
+  }
+
+  private generateDaySummary(dayNumber: number, theme: string, city: string, activities: any[]): string {
+    const mainActivities = activities.slice(0, 2).map(act => act.title).filter(Boolean);
+    
+    // Generate summary based on day number and content
+    if (dayNumber === 0) {
+      return `準備出發，整理行李並前往機場，開始13天西班牙深度旅行冒險`;
+    }
+    
+    if (dayNumber === 13) {
+      return `完成西班牙旅程，帶著滿滿回憶返回台灣，結束難忘的深度之旅`;
+    }
+    
+    // For regular days, combine theme, city, and main activities
+    let summary = '';
+    
+    if (theme && city) {
+      if (mainActivities.length > 0) {
+        const activityText = mainActivities.join('、');
+        summary = `在${city}${theme}，${activityText}，感受西班牙的魅力`;
+      } else {
+        summary = `在${city}體驗${theme}，探索西班牙獨特的文化與風情`;
+      }
+    } else if (city) {
+      summary = `探索${city}的迷人景色，品味當地文化與美食的精彩體驗`;
+    } else if (theme) {
+      summary = `${theme}，深度體驗西班牙的歷史文化與自然風光`;
+    } else {
+      summary = `精彩的西班牙旅程，探索當地獨特的文化與美景`;
+    }
+    
+    // Ensure summary is around 30 characters
+    if (summary.length > 35) {
+      summary = summary.substring(0, 32) + '...';
+    }
+    
+    return summary;
   }
 
   private extractCityFromString(text: string): string {
