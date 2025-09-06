@@ -11,7 +11,7 @@ import type { ItineraryDay, Attraction, TravelReminder } from "@shared/schema";
 import { attractions } from "@/data/attractions";
 import { travelReminders } from "@/data/reminders";
 import useEmblaCarousel from 'embla-carousel-react';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 const Home = () => {
   const departureDate = new Date('2025-10-05T00:30:00+08:00'); // Taiwan time
@@ -43,6 +43,28 @@ const Home = () => {
 
   const scrollNext = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  // 滾輪水平滑動功能
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const { deltaY } = event;
+      
+      if (deltaY > 0) {
+        emblaApi.scrollNext();
+      } else if (deltaY < 0) {
+        emblaApi.scrollPrev();
+      }
+    };
+
+    const emblaNode = emblaApi.rootNode();
+    if (emblaNode) {
+      emblaNode.addEventListener('wheel', handleWheel, { passive: false });
+      return () => emblaNode.removeEventListener('wheel', handleWheel);
+    }
   }, [emblaApi]);
 
   const scrollToSection = (sectionId: string) => {
