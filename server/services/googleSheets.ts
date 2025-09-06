@@ -36,10 +36,10 @@ class GoogleSheetsService {
     }
   }
 
-  // Parse DailyItinerary sheet data (horizontal format)
+  // Parse Activities sheet data (horizontal format)
   async getDailyItinerary() {
     try {
-      const data = await this.getSheetData('DailyItinerary');
+      const data = await this.getSheetData('Activities');
       if (!data || data.length === 0) return [];
 
       const headers = data[0]; // First row contains dayNumbers (0, 1, 2, ...)
