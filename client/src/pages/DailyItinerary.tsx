@@ -4,11 +4,34 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
-import { dailyItinerary } from "@/data/itinerary";
+import { useQuery } from "@tanstack/react-query";
+import type { ItineraryDay } from "@shared/schema";
 
 const DailyItinerary = () => {
   const [selectedDay, setSelectedDay] = useState(1);
+  
+  const { data: itinerary, isLoading } = useQuery<ItineraryDay[]>({
+    queryKey: ['/api/itinerary'],
+  });
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen pt-20 flex items-center justify-center">
+        <div className="text-lg text-muted-foreground">載入行程資料中...</div>
+      </div>
+    );
+  }
+  
+  const dailyItinerary = itinerary || [];
   const currentItinerary = dailyItinerary.find(day => day.dayNumber === selectedDay) || dailyItinerary[0];
+  
+  if (!currentItinerary) {
+    return (
+      <div className="min-h-screen pt-20 flex items-center justify-center">
+        <div className="text-lg text-muted-foreground">無可用的行程資料</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-20" data-testid="daily-itinerary-page">

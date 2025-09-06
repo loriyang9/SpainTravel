@@ -5,12 +5,26 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "wouter";
 import ReminderCard from "@/components/ReminderCard";
-import { travelReminders } from "@/data/reminders";
+import { useQuery } from "@tanstack/react-query";
+import type { TravelReminder } from "@shared/schema";
 
 const TravelReminders = () => {
   const [selectedPriority, setSelectedPriority] = useState("全部");
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
-
+  
+  const { data: reminders, isLoading } = useQuery<TravelReminder[]>({
+    queryKey: ['/api/reminders'],
+  });
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen pt-20 flex items-center justify-center">
+        <div className="text-lg text-muted-foreground">載入提醒資料中...</div>
+      </div>
+    );
+  }
+  
+  const travelReminders = reminders || [];
   const priorities = ["全部", "1", "2", "3", "4", "5"];
 
   const filteredReminders = travelReminders.filter(reminder => {

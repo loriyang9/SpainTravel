@@ -5,17 +5,31 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import AttractionCard from "@/components/AttractionCard";
-import { attractions } from "@/data/attractions";
+import { useQuery } from "@tanstack/react-query";
+import type { Attraction } from "@shared/schema";
 
 const KeyAttractions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("全部");
   const [selectedCategory, setSelectedCategory] = useState("全部");
+  
+  const { data: attractions, isLoading } = useQuery<Attraction[]>({
+    queryKey: ['/api/attractions'],
+  });
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen pt-20 flex items-center justify-center">
+        <div className="text-lg text-muted-foreground">載入景點資料中...</div>
+      </div>
+    );
+  }
+  
+  const attractionsData = attractions || [];
+  const cities = ["全部", ...Array.from(new Set(attractionsData.map(a => a.city)))];
+  const categories = ["全部", ...Array.from(new Set(attractionsData.map(a => a.category)))];
 
-  const cities = ["全部", ...Array.from(new Set(attractions.map(a => a.city)))];
-  const categories = ["全部", ...Array.from(new Set(attractions.map(a => a.category)))];
-
-  const filteredAttractions = attractions.filter(attraction => {
+  const filteredAttractions = attractionsData.filter(attraction => {
     const matchesSearch = attraction.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          attraction.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCity = selectedCity === "全部" || attraction.city === selectedCity;
