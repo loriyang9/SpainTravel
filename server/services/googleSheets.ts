@@ -260,7 +260,9 @@ class GoogleSheetsService {
     // Try AI generation if available
     if (this.openai) {
       try {
+        console.log(`🤖 Starting AI generation for Day ${dayNumber}: ${theme} in ${city}`);
         const description = await this.generateAIDescription(dayNumber, theme, city, activities);
+        console.log(`✅ AI generated description: "${description}"`);
         // Cache the result
         this.descriptionsCache.set(dataHash, {
           description,
@@ -268,8 +270,11 @@ class GoogleSheetsService {
         });
         return description;
       } catch (error) {
-        console.warn('AI generation failed, falling back to template:', error.message);
+        console.warn('❌ AI generation failed, falling back to template:', error.message);
+        console.warn('Error details:', error);
       }
+    } else {
+      console.log('⚠️ OpenAI client not available, using template');
     }
     
     // Fallback to template-based generation (without length limit)
@@ -279,6 +284,14 @@ class GoogleSheetsService {
   // AI-powered description generation
   private async generateAIDescription(dayNumber: number, theme: string, city: string, activities: any[]): Promise<string> {
     const mainActivities = activities.slice(0, 3).map(act => act.title).filter(Boolean);
+    
+    console.log(`📝 AI generation parameters:`, {
+      dayNumber,
+      theme,
+      city,
+      mainActivities: mainActivities.length,
+      hasOpenAI: !!this.openai
+    });
     
     const prompt = `為一個西班牙旅遊行程的第${dayNumber}天生成一個生動、吸引人的40-60字中文描述。
 
@@ -297,6 +310,8 @@ class GoogleSheetsService {
 
 範例風格：「漫步在巴薩隆納的蘭布拉大道，探訪高第的建築奇蹟聖家堂，在哥德區的石板路上感受中世紀的浪漫，品嚐道地的加泰隆尼亞美食，讓藝術與歷史在每個轉角與你相遇」`;
     
+    console.log(`🚀 Making OpenAI API call with model: gpt-5`);
+    
     // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
     const response = await this.openai!.chat.completions.create({
       model: "gpt-5",
@@ -313,7 +328,15 @@ class GoogleSheetsService {
       max_completion_tokens: 200
     });
     
-    return response.choices[0]?.message?.content?.trim() || this.generateTemplateDescription(dayNumber, theme, city, activities);
+    console.log(`📨 OpenAI API response:`, {
+      choices: response.choices?.length || 0,
+      firstChoice: response.choices?.[0]?.message?.content?.substring(0, 100) + '...',
+      usage: response.usage
+    });
+    
+    const result = response.choices[0]?.message?.content?.trim() || this.generateTemplateDescription(dayNumber, theme, city, activities);
+    console.log(`🎯 Final description result: "${result}"`);
+    return result;
   }
   
   // Template-based fallback generation (no length limit)
