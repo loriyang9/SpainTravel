@@ -1,0 +1,279 @@
+import { useState } from "react";
+import { ArrowLeft, Check, AlertTriangle, Filter } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "wouter";
+import ReminderCard from "@/components/ReminderCard";
+import { travelReminders } from "@/data/reminders";
+
+const TravelReminders = () => {
+  const [selectedPriority, setSelectedPriority] = useState("全部");
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+
+  const priorities = ["全部", "1", "2", "3", "4", "5"];
+
+  const filteredReminders = travelReminders.filter(reminder => {
+    return selectedPriority === "全部" || reminder.priority.toString() === selectedPriority;
+  });
+
+  const getPriorityLabel = (priority: number) => {
+    switch (priority) {
+      case 1:
+        return "最高優先級";
+      case 2:
+        return "高優先級";
+      case 3:
+        return "中優先級";
+      case 4:
+        return "低優先級";
+      case 5:
+        return "提醒事項";
+      default:
+        return "未知";
+    }
+  };
+
+  const getPriorityColor = (priority: number) => {
+    switch (priority) {
+      case 1:
+        return "destructive";
+      case 2:
+        return "chart-5";
+      case 3:
+        return "chart-1";
+      case 4:
+        return "chart-2";
+      case 5:
+        return "chart-3";
+      default:
+        return "muted";
+    }
+  };
+
+  const handleItemCheck = (reminderId: string, itemIndex: number) => {
+    const key = `${reminderId}-${itemIndex}`;
+    setCheckedItems(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const getTotalItems = () => {
+    return travelReminders.reduce((total, reminder) => total + reminder.items.length, 0);
+  };
+
+  const getCheckedItems = () => {
+    return Object.values(checkedItems).filter(Boolean).length;
+  };
+
+  const getCompletionPercentage = () => {
+    const total = getTotalItems();
+    const checked = getCheckedItems();
+    return total > 0 ? Math.round((checked / total) * 100) : 0;
+  };
+
+  return (
+    <div className="min-h-screen pt-20" data-testid="travel-reminders-page">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <Link href="/">
+            <Button variant="ghost" className="mb-4" data-testid="back-to-home">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              返回首頁
+            </Button>
+          </Link>
+          <h1 className="text-4xl font-bold text-foreground font-serif mb-4">旅遊提醒事項</h1>
+          <p className="text-lg text-muted-foreground">重要注意事項與實用旅遊貼士</p>
+        </div>
+
+        {/* Progress Overview */}
+        <div className="mb-8 p-6 bg-card rounded-lg shadow-lg">
+          <h3 className="text-xl font-semibold mb-4 flex items-center">
+            📋 準備進度總覽
+          </h3>
+          <div className="grid md:grid-cols-4 gap-4 mb-4">
+            <div className="text-center p-4 bg-primary/10 rounded-lg" data-testid="total-items">
+              <div className="text-2xl font-bold text-primary">{getTotalItems()}</div>
+              <div className="text-sm text-muted-foreground">總項目數</div>
+            </div>
+            <div className="text-center p-4 bg-chart-1/10 rounded-lg" data-testid="completed-items">
+              <div className="text-2xl font-bold text-chart-1">{getCheckedItems()}</div>
+              <div className="text-sm text-muted-foreground">已完成項目</div>
+            </div>
+            <div className="text-center p-4 bg-chart-2/10 rounded-lg" data-testid="remaining-items">
+              <div className="text-2xl font-bold text-chart-2">{getTotalItems() - getCheckedItems()}</div>
+              <div className="text-sm text-muted-foreground">待完成項目</div>
+            </div>
+            <div className="text-center p-4 bg-chart-3/10 rounded-lg" data-testid="completion-percentage">
+              <div className="text-2xl font-bold text-chart-3">{getCompletionPercentage()}%</div>
+              <div className="text-sm text-muted-foreground">完成度</div>
+            </div>
+          </div>
+          <div className="w-full bg-muted rounded-full h-3">
+            <div 
+              className="bg-primary h-3 rounded-full transition-all duration-300" 
+              style={{ width: `${getCompletionPercentage()}%` }}
+              data-testid="progress-bar"
+            ></div>
+          </div>
+        </div>
+
+        {/* Filter */}
+        <div className="mb-8 p-6 bg-card rounded-lg shadow-lg">
+          <div className="flex items-center space-x-4">
+            <Filter className="w-5 h-5 text-muted-foreground" />
+            <span className="font-medium">優先級篩選：</span>
+            <select
+              value={selectedPriority}
+              onChange={(e) => setSelectedPriority(e.target.value)}
+              className="px-3 py-2 bg-background border border-input rounded-md text-foreground"
+              data-testid="priority-filter"
+            >
+              {priorities.map(priority => (
+                <option key={priority} value={priority}>
+                  {priority === "全部" ? "全部優先級" : `優先級 ${priority}`}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Reminders Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="reminders-grid">
+          {filteredReminders.map((reminder) => (
+            <div key={reminder.id} className="bg-card rounded-xl p-6 shadow-lg card-hover">
+              {/* Priority Badge */}
+              <div className="flex items-center justify-between mb-4">
+                <Badge 
+                  variant="outline"
+                  className={`bg-${getPriorityColor(reminder.priority)}/10 text-${getPriorityColor(reminder.priority)} border-${getPriorityColor(reminder.priority)}/20`}
+                  data-testid={`priority-badge-${reminder.id}`}
+                >
+                  {getPriorityLabel(reminder.priority)}
+                </Badge>
+                {reminder.priority <= 2 && (
+                  <AlertTriangle className={`w-4 h-4 text-${getPriorityColor(reminder.priority)}`} />
+                )}
+              </div>
+
+              {/* Icon and Title */}
+              <div className={`bg-${getPriorityColor(reminder.priority)}/10 rounded-full w-12 h-12 flex items-center justify-center mb-4`}>
+                <div className={`text-${getPriorityColor(reminder.priority)} text-xl`}>
+                  {reminder.icon === "Passport" && "🛂"}
+                  {reminder.icon === "CreditCard" && "💳"}
+                  {reminder.icon === "Luggage" && "🧳"}
+                  {reminder.icon === "Smartphone" && "📱"}
+                  {reminder.icon === "Shield" && "🛡️"}
+                  {reminder.icon === "UtensilsCrossed" && "🍽️"}
+                </div>
+              </div>
+
+              <h3 className="text-xl font-semibold mb-3 text-card-foreground" data-testid={`reminder-title-${reminder.id}`}>
+                {reminder.title}
+              </h3>
+
+              {/* Checklist Items */}
+              <ul className="space-y-3">
+                {reminder.items.map((item, index) => {
+                  const itemKey = `${reminder.id}-${index}`;
+                  const isChecked = checkedItems[itemKey] || false;
+                  
+                  return (
+                    <li key={index} className="flex items-start space-x-3" data-testid={`reminder-item-${reminder.id}-${index}`}>
+                      <Checkbox
+                        checked={isChecked}
+                        onCheckedChange={() => handleItemCheck(reminder.id, index)}
+                        className="mt-0.5"
+                        data-testid={`checkbox-${reminder.id}-${index}`}
+                      />
+                      <span 
+                        className={`text-sm ${isChecked 
+                          ? 'line-through text-muted-foreground' 
+                          : 'text-foreground'
+                        }`}
+                      >
+                        {item.text}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              {/* Progress for this card */}
+              <div className="mt-4 pt-4 border-t">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">進度</span>
+                  <span className="font-medium">
+                    {reminder.items.filter((_, index) => checkedItems[`${reminder.id}-${index}`]).length} / {reminder.items.length}
+                  </span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2 mt-2">
+                  <div 
+                    className="bg-primary h-2 rounded-full transition-all duration-300" 
+                    style={{ 
+                      width: `${(reminder.items.filter((_, index) => checkedItems[`${reminder.id}-${index}`]).length / reminder.items.length) * 100}%` 
+                    }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Important Notes */}
+        <div className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg" data-testid="important-notes">
+          <h3 className="text-lg font-semibold mb-4 flex items-center text-yellow-800 dark:text-yellow-200">
+            ⚠️ 重要提醒
+          </h3>
+          <div className="grid md:grid-cols-2 gap-4 text-sm text-yellow-700 dark:text-yellow-300">
+            <div>
+              <h4 className="font-medium mb-2">出發前7天</h4>
+              <p>確認所有優先級1-2的項目都已完成，特別是證件和保險相關事項。</p>
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">出發前3天</h4>
+              <p>完成所有打包準備，確認天氣預報，準備適合的衣物。</p>
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">出發當天</h4>
+              <p>提早2-3小時到達機場，隨身攜帶重要證件和藥品。</p>
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">抵達西班牙後</h4>
+              <p>第一時間確認住宿、購買交通卡，並測試通訊設備。</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mt-8 flex justify-center space-x-4">
+          <Button 
+            onClick={() => setCheckedItems({})}
+            variant="outline"
+            data-testid="reset-all"
+          >
+            重置所有項目
+          </Button>
+          <Button 
+            onClick={() => {
+              const allItems: Record<string, boolean> = {};
+              travelReminders.forEach(reminder => {
+                reminder.items.forEach((_, index) => {
+                  allItems[`${reminder.id}-${index}`] = true;
+                });
+              });
+              setCheckedItems(allItems);
+            }}
+            data-testid="mark-all-complete"
+          >
+            標記全部完成
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TravelReminders;
