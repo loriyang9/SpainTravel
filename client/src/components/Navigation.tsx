@@ -42,9 +42,7 @@ const Navigation = () => {
         <Link href="/" data-testid="logo-link">
           <div className="flex items-center space-x-2">
             <Sun className="h-8 w-8 text-primary" />
-            <h1 className="text-xl font-bold text-foreground font-serif">
-              西班牙金秋之旅
-            </h1>
+            <h1 className="font-bold text-foreground font-serif text-[20px]">楊家醬 in Spain</h1>
           </div>
         </Link>
 
