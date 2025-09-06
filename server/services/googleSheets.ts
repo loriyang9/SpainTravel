@@ -310,7 +310,7 @@ class GoogleSheetsService {
           content: prompt
         }
       ],
-      max_tokens: 200,
+      max_completion_tokens: 200,
       temperature: 0.7
     });
     
