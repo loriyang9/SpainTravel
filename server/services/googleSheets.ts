@@ -40,7 +40,10 @@ class GoogleSheetsService {
   async getDailyItineraryOverview() {
     try {
       const data = await this.getSheetData('DailyItinerary');
-      if (!data || data.length === 0) return {};
+      
+      if (!data || data.length === 0) {
+        return {};
+      }
 
       const headers = data[0]; // First row contains dayNumbers (0, 1, 2, ...)
       const dayOverviews: { [key: number]: any } = {};

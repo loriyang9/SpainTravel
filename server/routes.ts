@@ -37,6 +37,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+
   // Weather API endpoint
   app.get("/api/weather/:city", async (req, res) => {
     try {
