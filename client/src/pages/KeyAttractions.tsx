@@ -153,30 +153,6 @@ const KeyAttractions = () => {
           </div>
         )}
 
-        {/* Quick Tips */}
-        <div className="mt-12 p-6 bg-muted/20 rounded-lg" data-testid="quick-tips">
-          <h3 className="text-lg font-semibold mb-4 flex items-center">
-            💡 參觀小貼士
-          </h3>
-          <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
-            <div>
-              <h4 className="font-medium text-foreground mb-2">預約門票</h4>
-              <p>聖家堂、阿爾罕布拉宮等熱門景點建議提前網上預約，避免現場排隊。</p>
-            </div>
-            <div>
-              <h4 className="font-medium text-foreground mb-2">最佳拍照時間</h4>
-              <p>黃金時段（日出後1小時、日落前1小時）是拍攝建築的最佳時機。</p>
-            </div>
-            <div>
-              <h4 className="font-medium text-foreground mb-2">參觀時間</h4>
-              <p>大部分景點週一休館，建議確認開放時間後再前往參觀。</p>
-            </div>
-            <div>
-              <h4 className="font-medium text-foreground mb-2">語音導覽</h4>
-              <p>許多景點提供中文語音導覽，能更深入了解歷史文化背景。</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
