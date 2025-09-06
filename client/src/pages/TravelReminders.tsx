@@ -142,14 +142,18 @@ const TravelReminders = () => {
                         className="mt-0.5"
                         data-testid={`checkbox-${reminder.id}-${index}`}
                       />
-                      <span 
+                      <div 
                         className={`text-sm ${isChecked 
                           ? 'line-through text-muted-foreground' 
                           : 'text-foreground'
                         }`}
                       >
-                        {item.text}
-                      </span>
+                        {item.text.split('\n').map((line, lineIndex) => (
+                          <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
+                            {line}
+                          </div>
+                        ))}
+                      </div>
                     </li>
                   );
                 })}
