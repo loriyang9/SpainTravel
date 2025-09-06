@@ -113,23 +113,9 @@ const TravelReminders = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="reminders-grid">
           {travelReminders.map((reminder) => (
             <div key={reminder.id} className="bg-card rounded-xl p-6 shadow-lg card-hover">
-              {/* Priority Badge */}
-              <div className="flex items-center justify-between mb-4">
-                <Badge 
-                  variant="outline"
-                  className={`bg-${getPriorityColor(reminder.priority)}/10 text-${getPriorityColor(reminder.priority)} border-${getPriorityColor(reminder.priority)}/20`}
-                  data-testid={`priority-badge-${reminder.id}`}
-                >
-                  {getPriorityLabel(reminder.priority)}
-                </Badge>
-                {reminder.priority <= 2 && (
-                  <AlertTriangle className={`w-4 h-4 text-${getPriorityColor(reminder.priority)}`} />
-                )}
-              </div>
-
               {/* Icon and Title */}
-              <div className={`bg-${getPriorityColor(reminder.priority)}/10 rounded-full w-12 h-12 flex items-center justify-center mb-4`}>
-                <div className={`text-${getPriorityColor(reminder.priority)} text-xl`}>
+              <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                <div className="text-primary text-xl">
                   {reminder.icon === "Passport" && "🛂"}
                   {reminder.icon === "CreditCard" && "💳"}
                   {reminder.icon === "Luggage" && "🧳"}
