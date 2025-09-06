@@ -107,19 +107,13 @@ const KeyAttractions = () => {
 
         {/* Statistics */}
         <div className="mb-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 bg-primary/10 rounded-lg" data-testid="total-attractions">
-              <div className="text-2xl font-bold text-primary">{attractions.length}</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="text-center p-6 bg-primary/10 rounded-lg" data-testid="total-attractions">
+              <div className="text-3xl font-bold text-primary">{attractions.length}</div>
               <div className="text-sm text-muted-foreground">總景點數</div>
             </div>
-            <div className="text-center p-4 bg-chart-2/10 rounded-lg" data-testid="cities-count">
-              <div className="text-2xl font-bold text-chart-2">
-                {new Set(attractions.map(a => a.city)).size}
-              </div>
-              <div className="text-sm text-muted-foreground">城市</div>
-            </div>
-            <div className="text-center p-4 bg-chart-3/10 rounded-lg" data-testid="filtered-count">
-              <div className="text-2xl font-bold text-chart-3">{filteredAttractions.length}</div>
+            <div className="text-center p-6 bg-chart-3/10 rounded-lg" data-testid="filtered-count">
+              <div className="text-3xl font-bold text-chart-3">{filteredAttractions.length}</div>
               <div className="text-sm text-muted-foreground">符合條件</div>
             </div>
           </div>
