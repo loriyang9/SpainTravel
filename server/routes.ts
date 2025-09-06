@@ -99,6 +99,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Debug endpoint to see raw sheet data
+  app.get("/api/debug/sheets/:sheetName", async (req, res) => {
+    try {
+      const { sheetName } = req.params;
+      const rawData = await googleSheetsService.getSheetData(sheetName);
+      res.json({
+        sheetName,
+        rowCount: rawData.length,
+        data: rawData
+      });
+    } catch (error) {
+      console.error(`Debug error for sheet ${req.params.sheetName}:`, error);
+      res.status(500).json({ error: `無法讀取 ${req.params.sheetName} 資料` });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
