@@ -310,8 +310,7 @@ class GoogleSheetsService {
           content: prompt
         }
       ],
-      max_completion_tokens: 200,
-      temperature: 0.7
+      max_completion_tokens: 200
     });
     
     return response.choices[0]?.message?.content?.trim() || this.generateTemplateDescription(dayNumber, theme, city, activities);
