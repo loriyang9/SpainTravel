@@ -8,7 +8,6 @@ import AttractionCard from "@/components/AttractionCard";
 import ReminderCard from "@/components/ReminderCard";
 import { useQuery } from "@tanstack/react-query";
 import type { ItineraryDay, Attraction, TravelReminder } from "@shared/schema";
-import { travelReminders } from "@/data/reminders";
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCallback, useEffect, useMemo } from 'react';
 
@@ -25,6 +24,11 @@ const Home = () => {
   // Fetch attractions data from API
   const { data: attractionsData } = useQuery<Attraction[]>({
     queryKey: ['/api/attractions'],
+  });
+  
+  // Fetch reminders data from API
+  const { data: remindersData } = useQuery<TravelReminder[]>({
+    queryKey: ['/api/reminders'],
   });
   
   // Calculate actual trip days (exclude Day 0)
@@ -99,7 +103,8 @@ const Home = () => {
     return selectedAttractions.slice(0, 6); // 確保只返回6個
   }, [itinerary, attractionsData, actualTripDays]);
   
-  const previewReminders = travelReminders.slice(0, 6);
+  // Only show "出發前準備" reminder
+  const previewReminders = remindersData ? remindersData.filter(reminder => reminder.title === "出發前準備") : [];
   
   // Carousel setup for itinerary preview
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
@@ -314,7 +319,7 @@ const Home = () => {
             <p className="text-lg text-muted-foreground">重要注意事項與實用旅遊貼士</p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 gap-8 mb-8 max-w-2xl mx-auto">
             {previewReminders.map((reminder) => (
               <ReminderCard
                 key={reminder.id}
