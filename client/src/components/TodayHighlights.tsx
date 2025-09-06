@@ -132,7 +132,9 @@ const TodayHighlights = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-card-foreground font-serif">
             今日行程重點
           </h2>
-          <p className="text-lg text-muted-foreground">當天重要安排一目了然</p>
+          <p className="text-lg text-muted-foreground">
+            Day {currentDay} {todayItinerary?.date || ''} 重要安排一目了然
+          </p>
         </div>
         
         <div className="bg-background rounded-xl p-8 shadow-lg">
