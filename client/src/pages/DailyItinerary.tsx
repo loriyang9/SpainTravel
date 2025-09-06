@@ -25,6 +25,9 @@ const DailyItinerary = () => {
   const dailyItinerary = itinerary || [];
   const currentItinerary = dailyItinerary.find(day => day.dayNumber === selectedDay) || dailyItinerary[0];
   
+  // Calculate actual trip days (exclude Day 0)
+  const actualTripDays = dailyItinerary.length > 0 ? Math.max(...dailyItinerary.filter(d => d.dayNumber > 0).map(d => d.dayNumber)) : 15;
+  
   if (!currentItinerary) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
@@ -45,7 +48,7 @@ const DailyItinerary = () => {
             </Button>
           </Link>
           <h1 className="text-4xl font-bold text-foreground font-serif mb-4">每日完整行程</h1>
-          <p className="text-lg text-muted-foreground">{dailyItinerary.length}天西班牙深度之旅詳細規劃</p>
+          <p className="text-lg text-muted-foreground">{actualTripDays}天西班牙深度之旅詳細規劃</p>
         </div>
 
         <div className="grid lg:grid-cols-4 gap-8">

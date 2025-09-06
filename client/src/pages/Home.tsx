@@ -20,6 +20,9 @@ const Home = () => {
     queryKey: ['/api/itinerary'],
   });
   
+  // Calculate actual trip days (exclude Day 0)
+  const actualTripDays = itinerary ? Math.max(...itinerary.filter(d => d.dayNumber > 0).map(d => d.dayNumber)) : 15;
+  
   // Get first few items for preview
   const previewItinerary = (itinerary || []).slice(0, 6);
   const previewAttractions = attractions.slice(0, 4);
@@ -90,7 +93,7 @@ const Home = () => {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground font-serif">
               每日行程預覽
             </h2>
-            <p className="text-lg text-muted-foreground">{previewItinerary.length > 0 ? `${Math.max(...previewItinerary.map(d => d.dayNumber)) + 1}天` : '15天'}西班牙深度之旅精彩規劃</p>
+            <p className="text-lg text-muted-foreground">{actualTripDays}天西班牙深度之旅精彩規劃</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
@@ -208,7 +211,7 @@ const Home = () => {
                 <h3 className="text-xl font-bold font-serif">西班牙金秋之旅</h3>
               </div>
               <p className="text-sm opacity-80">
-                探索西班牙的黃金時光，感受秋日的浪漫與熱情。{previewItinerary.length > 0 ? `${Math.max(...previewItinerary.map(d => d.dayNumber)) + 1}天` : '15天'}深度之旅，帶您領略伊比利亞半島的文化瑰寶。
+                探索西班牙的黃金時光，感受秋日的浪漫與熱情。{actualTripDays}天深度之旅，帶您領略伊比利亞半島的文化瑰寶。
               </p>
             </div>
             
@@ -227,7 +230,7 @@ const Home = () => {
               <ul className="space-y-2 text-sm opacity-80">
                 <li className="flex items-center"><span>✈️ 出發：2025/10/05</span></li>
                 <li className="flex items-center"><span>🏠 返回：2025/10/18</span></li>
-                <li className="flex items-center"><span>📅 天數：{previewItinerary.length > 0 ? `${Math.max(...previewItinerary.map(d => d.dayNumber)) + 1}天${Math.max(...previewItinerary.map(d => d.dayNumber)) - 1}夜` : '15天13夜'}</span></li>
+                <li className="flex items-center"><span>📅 天數：{actualTripDays}天{actualTripDays - 2}夜</span></li>
                 <li className="flex items-center"><span>🏙️ 城市：6個主要城市</span></li>
               </ul>
             </div>
