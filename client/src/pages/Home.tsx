@@ -1,4 +1,4 @@
-import { Sun, ArrowDown, Calendar, Compass, List } from "lucide-react";
+import { Sun, ArrowDown, Calendar, Compass, List, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import CountdownTimer from "@/components/CountdownTimer";
@@ -10,6 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 import type { ItineraryDay, Attraction, TravelReminder } from "@shared/schema";
 import { attractions } from "@/data/attractions";
 import { travelReminders } from "@/data/reminders";
+import useEmblaCarousel from 'embla-carousel-react';
+import { useCallback } from 'react';
 
 const Home = () => {
   const departureDate = new Date('2025-10-05T00:30:00+08:00'); // Taiwan time
@@ -24,9 +26,22 @@ const Home = () => {
   const actualTripDays = itinerary ? Math.max(...itinerary.filter(d => d.dayNumber > 0).map(d => d.dayNumber)) : 15;
   
   // Get first few items for preview
-  const previewItinerary = (itinerary || []).slice(0, 6);
   const previewAttractions = attractions.slice(0, 4);
   const previewReminders = travelReminders.slice(0, 6);
+  
+  // Carousel setup for itinerary preview
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    slidesToScroll: 1,
+    containScroll: 'trimSnaps'
+  });
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -96,20 +111,48 @@ const Home = () => {
             <p className="text-lg text-muted-foreground">{actualTripDays}天西班牙深度之旅精彩規劃</p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {previewItinerary.map((day) => (
-              <ItineraryCard
-                key={day.dayNumber}
-                dayNumber={day.dayNumber}
-                date={day.date}
-                title={day.title}
-                description={day.description}
-                duration={day.estimatedDuration}
-                imageUrl={day.imageUrl}
-                color={`chart-${day.dayNumber <= 5 ? day.dayNumber : 5}`}
-                onClick={() => {/* Navigate to detailed itinerary */}}
-              />
-            ))}
+          <div className="relative mb-8">
+            {/* Navigation buttons */}
+            <div className="flex justify-end gap-2 mb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={scrollPrev}
+                className="h-10 w-10 rounded-full p-0"
+                data-testid="carousel-prev"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={scrollNext}
+                className="h-10 w-10 rounded-full p-0"
+                data-testid="carousel-next"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            {/* Carousel */}
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex gap-6">
+                {(itinerary || []).map((day) => (
+                  <div key={day.dayNumber} className="flex-none w-80 md:w-96">
+                    <ItineraryCard
+                      dayNumber={day.dayNumber}
+                      date={day.date || ''}
+                      title={day.title || ''}
+                      description={day.description || ''}
+                      duration={day.estimatedDuration || ''}
+                      imageUrl={day.imageUrl || ''}
+                      color={`chart-${day.dayNumber <= 5 ? day.dayNumber : 5}`}
+                      onClick={() => {/* Navigate to detailed itinerary */}}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           
           <div className="text-center">
