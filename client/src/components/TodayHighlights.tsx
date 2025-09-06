@@ -1,5 +1,6 @@
 import { Clock, MapPin, Utensils, Bed, Sun } from "lucide-react";
 import { useWeather } from "@/hooks/useWeather";
+import { useQuery } from "@tanstack/react-query";
 
 interface TodayHighlight {
   departure: string;
@@ -14,17 +15,55 @@ interface TodayHighlight {
 }
 
 const TodayHighlights = () => {
-  // This would come from your itinerary data based on current date
+  // Calculate which day of the trip we're currently on
+  const getCurrentTripDay = () => {
+    const departureDate = new Date('2025-10-05T00:30:00+08:00'); // Taiwan time
+    const currentDate = new Date();
+    const diffTime = currentDate.getTime() - departureDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    // During the trip (Day 0 to Day 14)
+    if (diffDays >= 0 && diffDays <= 14) {
+      return diffDays;
+    }
+    
+    // Before the trip - show Day 0 
+    if (diffDays < 0) {
+      return 0;
+    }
+    
+    // After the trip - show last day
+    return 14;
+  };
+
+  const currentDay = getCurrentTripDay();
+
+  // Fetch today's itinerary data
+  const { data: itineraryData = [] } = useQuery({
+    queryKey: ['/api/itinerary'],
+  });
+
+  const todayItinerary = itineraryData.find((day: any) => day.dayNumber === currentDay);
+
+  // Extract city from the itinerary data
+  const extractCityFromTitle = (title: string): string => {
+    if (title.includes('巴薩隆納') || title.includes('Barcelona')) return 'Barcelona';
+    if (title.includes('薩拉曼卡') || title.includes('Salamanca')) return 'Salamanca';
+    if (title.includes('馬德里') || title.includes('Madrid')) return 'Madrid';
+    if (title.includes('台北') || title.includes('Taipei')) return 'Taipei';
+    return 'Barcelona'; // default
+  };
+
   const todayData: TodayHighlight = {
-    departure: "09:00",
-    departureLocation: "飯店大廳",
-    activities: "聖家堂參觀",
-    activitiesDetail: "巴塞隆納必遊景點",
-    meals: "海鮮燉飯",
-    mealsDetail: "當地特色料理",
-    accommodation: "巴塞隆納酒店",
-    accommodationDetail: "市中心四星級",
-    city: "Barcelona",
+    departure: todayItinerary?.activities?.[0]?.time || "全天",
+    departureLocation: todayItinerary?.activities?.[0]?.location || "依行程安排",
+    activities: todayItinerary?.activities?.[0]?.name || todayItinerary?.title || "行程安排中",
+    activitiesDetail: todayItinerary?.description || "詳細資訊請參考每日行程",
+    meals: todayItinerary?.meals?.lunch || todayItinerary?.meals?.breakfast || todayItinerary?.meals?.dinner || "依當地安排",
+    mealsDetail: "品嚐道地西班牙美食",
+    accommodation: todayItinerary?.accommodation || "旅程住宿",
+    accommodationDetail: "舒適便利的住宿安排",
+    city: extractCityFromTitle(todayItinerary?.title || "Barcelona"),
   };
 
   const { data: weather } = useWeather(todayData.city);
