@@ -6,7 +6,8 @@ import TodayHighlights from "@/components/TodayHighlights";
 import ItineraryCard from "@/components/ItineraryCard";
 import AttractionCard from "@/components/AttractionCard";
 import ReminderCard from "@/components/ReminderCard";
-import { dailyItinerary } from "@/data/itinerary";
+import { useQuery } from "@tanstack/react-query";
+import type { ItineraryDay, Attraction, TravelReminder } from "@shared/schema";
 import { attractions } from "@/data/attractions";
 import { travelReminders } from "@/data/reminders";
 
@@ -14,8 +15,13 @@ const Home = () => {
   const departureDate = new Date('2025-10-05T00:30:00+08:00'); // Taiwan time
   const returnDate = new Date('2025-10-18T22:05:00+02:00'); // Spain time
   
+  // Fetch itinerary data from API
+  const { data: itinerary } = useQuery<ItineraryDay[]>({
+    queryKey: ['/api/itinerary'],
+  });
+  
   // Get first few items for preview
-  const previewItinerary = dailyItinerary.slice(0, 6);
+  const previewItinerary = (itinerary || []).slice(0, 6);
   const previewAttractions = attractions.slice(0, 4);
   const previewReminders = travelReminders.slice(0, 6);
 

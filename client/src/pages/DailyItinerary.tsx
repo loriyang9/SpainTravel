@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { ItineraryDay } from "@shared/schema";
 
 const DailyItinerary = () => {
-  const [selectedDay, setSelectedDay] = useState(1);
+  const [selectedDay, setSelectedDay] = useState(0);
   
   const { data: itinerary, isLoading } = useQuery<ItineraryDay[]>({
     queryKey: ['/api/itinerary'],
