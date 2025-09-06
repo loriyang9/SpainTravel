@@ -186,20 +186,38 @@ class GoogleSheetsService {
     return mainActivity?.title || `Day ${activities[0]?.dayNumber || ''}`;
   }
 
+  private extractCityFromString(text: string): string {
+    if (!text) return '';
+    
+    // Extract city names from text
+    if (text.includes('巴塞隆納') || text.includes('Barcelona') || text.includes('巴薩隆納')) return '巴薩隆納';
+    if (text.includes('馬德里') || text.includes('Madrid')) return '馬德里';  
+    if (text.includes('薩拉曼卡') || text.includes('Salamanca')) return '薩拉曼卡';
+    if (text.includes('托雷多') || text.includes('Toledo')) return '托雷多';
+    if (text.includes('台北') || text.includes('Taipei')) return '台北';
+    if (text.includes('杜拜') || text.includes('Dubai')) return '杜拜';
+    
+    return '';
+  }
+
   private extractCity(activities: any[]): string {
     if (!activities || activities.length === 0) return '';
     
-    // Try to extract city from location or title
+    // Try to extract city from various activity fields
     for (const activity of activities) {
-      const location = activity.location || '';
-      if (location) {
-        // Simple city extraction logic - can be enhanced
-        if (location.includes('巴塞隆納') || location.includes('Barcelona')) return '巴薩隆納';
-        if (location.includes('馬德里') || location.includes('Madrid')) return '馬德里';
-        if (location.includes('薩拉曼卡') || location.includes('Salamanca')) return '薩拉曼卡';
-        return location.split(',')[0].split('，')[0]; // Take first part before comma
-      }
+      // Check location field first
+      const cityFromLocation = this.extractCityFromString(activity.location || '');
+      if (cityFromLocation) return cityFromLocation;
+      
+      // Check title field  
+      const cityFromTitle = this.extractCityFromString(activity.title || '');
+      if (cityFromTitle) return cityFromTitle;
+      
+      // Check description field
+      const cityFromDesc = this.extractCityFromString(activity.description || '');
+      if (cityFromDesc) return cityFromDesc;
     }
+    
     return '';
   }
 
