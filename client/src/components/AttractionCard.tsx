@@ -83,9 +83,6 @@ const AttractionCard = ({
           >
             {getCategoryLabel(category)}
           </Badge>
-          <span className="text-muted-foreground text-sm" data-testid={`city-${id}`}>
-            {city}
-          </span>
         </div>
         
         <h3 className="text-2xl font-bold mb-4 text-foreground font-serif" data-testid={`name-${id}`}>
