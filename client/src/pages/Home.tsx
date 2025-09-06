@@ -33,7 +33,8 @@ const Home = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     dragFree: true,
     containScroll: 'trimSnaps',
-    slidesToScroll: 1
+    slidesToScroll: 1,
+    axis: 'x'
   });
 
   const scrollPrev = useCallback(() => {
@@ -136,8 +137,8 @@ const Home = () => {
             </div>
             
             {/* Carousel */}
-            <div className="overflow-hidden" ref={emblaRef}>
-              <div className="flex gap-6">
+            <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
+              <div className="flex gap-6 select-none">
                 {(itinerary || []).map((day) => (
                   <div key={day.dayNumber} className="flex-none w-80 md:w-96 h-[480px]">
                     <ItineraryCard
