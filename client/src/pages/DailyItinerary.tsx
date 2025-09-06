@@ -1,14 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar, Clock, MapPin, Utensils, Bed, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "wouter";
+import { Link, useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { ItineraryDay } from "@shared/schema";
 
 const DailyItinerary = () => {
-  const [selectedDay, setSelectedDay] = useState(0);
+  const { dayNumber } = useParams();
+  const [selectedDay, setSelectedDay] = useState(dayNumber ? parseInt(dayNumber) : 0);
+  
+  // Update selectedDay when URL parameter changes
+  useEffect(() => {
+    if (dayNumber) {
+      setSelectedDay(parseInt(dayNumber));
+    }
+  }, [dayNumber]);
   
   const { data: itinerary, isLoading } = useQuery<ItineraryDay[]>({
     queryKey: ['/api/itinerary'],

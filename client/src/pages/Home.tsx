@@ -1,6 +1,6 @@
 import { Sun, ArrowDown, Calendar, Compass, List, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import CountdownTimer from "@/components/CountdownTimer";
 import TodayHighlights from "@/components/TodayHighlights";
 import ItineraryCard from "@/components/ItineraryCard";
@@ -16,6 +16,7 @@ import { useCallback, useEffect } from 'react';
 const Home = () => {
   const departureDate = new Date('2025-10-05T00:30:00+08:00'); // Taiwan time
   const returnDate = new Date('2025-10-18T22:05:00+02:00'); // Spain time
+  const [, setLocation] = useLocation();
   
   // Fetch itinerary data from API
   const { data: itinerary } = useQuery<ItineraryDay[]>({
@@ -173,7 +174,7 @@ const Home = () => {
                       duration={day.estimatedDuration || ''}
                       imageUrl={day.imageUrl || ''}
                       color={`chart-${day.dayNumber <= 5 ? day.dayNumber : 5}`}
-                      onClick={() => {/* Navigate to detailed itinerary */}}
+                      onClick={() => setLocation(`/itinerary/${day.dayNumber}`)}
                     />
                   </div>
                 ))}
