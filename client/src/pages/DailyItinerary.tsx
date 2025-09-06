@@ -76,6 +76,7 @@ const DailyItinerary = () => {
                         <span className="text-sm opacity-80">{day.date}</span>
                       </div>
                       <div className="text-sm opacity-80 mt-1">{day.city}</div>
+                      <div className="text-sm text-primary font-medium mt-1">{day.title}</div>
                     </button>
                   ))}
                 </div>
