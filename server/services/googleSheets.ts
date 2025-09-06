@@ -195,18 +195,18 @@ class GoogleSheetsService {
   private calculateTotalDays(activitiesData: any[][], dailyOverviews: { [key: number]: any }): number {
     let maxDay = 0;
     
-    // Check activities data
+    // Check activities data (exclude Day 0)
     if (activitiesData && activitiesData.length > 1) {
       for (let row = 1; row < activitiesData.length; row++) {
         const dayNum = parseInt(activitiesData[row][0]);
-        if (!isNaN(dayNum) && dayNum > maxDay) {
+        if (!isNaN(dayNum) && dayNum > 0 && dayNum > maxDay) {
           maxDay = dayNum;
         }
       }
     }
     
-    // Check daily overviews data
-    const overviewDays = Object.keys(dailyOverviews).map(k => parseInt(k)).filter(n => !isNaN(n));
+    // Check daily overviews data (exclude Day 0)
+    const overviewDays = Object.keys(dailyOverviews).map(k => parseInt(k)).filter(n => !isNaN(n) && n > 0);
     if (overviewDays.length > 0) {
       const maxOverviewDay = Math.max(...overviewDays);
       if (maxOverviewDay > maxDay) {
@@ -214,8 +214,8 @@ class GoogleSheetsService {
       }
     }
     
-    // Total days = max day number + 1 (since we start from Day 0)
-    return maxDay + 1;
+    // Total days = max day number (Day 0 not counted)
+    return maxDay;
   }
 
   private generateDaySummary(dayNumber: number, theme: string, city: string, activities: any[], totalDays: number): string {
