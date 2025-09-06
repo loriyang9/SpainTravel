@@ -44,7 +44,7 @@ const Home = () => {
         </div>
         
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-          <h1 className="md:text-7xl font-bold text-white mb-6 font-serif animate-fade-in text-[50px] text-center">Golden Moment, Autumn Journey</h1>
+          <h1 className="md:text-7xl font-bold text-white mb-6 font-serif animate-fade-in text-center text-[50px]">Golden Moment, Autumn Journey</h1>
           
           {/* Countdown Timer - Dynamic */}
           <div className="mb-12 flex justify-center" data-testid="countdown-section">
