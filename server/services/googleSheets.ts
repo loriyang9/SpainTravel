@@ -104,6 +104,9 @@ class GoogleSheetsService {
         this.getDailyItineraryOverview()
       ]);
       
+      // Calculate total days from data
+      const totalDays = this.calculateTotalDays(activitiesData, dailyOverviews);
+      
       if (!activitiesData || activitiesData.length < 2) {
         return [];
       }
@@ -152,7 +155,7 @@ class GoogleSheetsService {
           dayNumber,
           date: overview.date || activities[0].date || '',
           title: overview.theme || this.extractDayTitle(activities), // Use Theme from DailyItinerary
-          description: this.generateDaySummary(dayNumber, overview.theme || '', overview.city || '', activities),
+          description: this.generateDaySummary(dayNumber, overview.theme || '', overview.city || '', activities, totalDays),
           city: overview.city || '', // Use City from DailyItinerary only
           activities: activities.map(act => ({
             time: act.time || '全天',
@@ -189,15 +192,41 @@ class GoogleSheetsService {
     return mainActivity?.title || `Day ${activities[0]?.dayNumber || ''}`;
   }
 
-  private generateDaySummary(dayNumber: number, theme: string, city: string, activities: any[]): string {
+  private calculateTotalDays(activitiesData: any[][], dailyOverviews: { [key: number]: any }): number {
+    let maxDay = 0;
+    
+    // Check activities data
+    if (activitiesData && activitiesData.length > 1) {
+      for (let row = 1; row < activitiesData.length; row++) {
+        const dayNum = parseInt(activitiesData[row][0]);
+        if (!isNaN(dayNum) && dayNum > maxDay) {
+          maxDay = dayNum;
+        }
+      }
+    }
+    
+    // Check daily overviews data
+    const overviewDays = Object.keys(dailyOverviews).map(k => parseInt(k)).filter(n => !isNaN(n));
+    if (overviewDays.length > 0) {
+      const maxOverviewDay = Math.max(...overviewDays);
+      if (maxOverviewDay > maxDay) {
+        maxDay = maxOverviewDay;
+      }
+    }
+    
+    // Total days = max day number + 1 (since we start from Day 0)
+    return maxDay + 1;
+  }
+
+  private generateDaySummary(dayNumber: number, theme: string, city: string, activities: any[], totalDays: number): string {
     const mainActivities = activities.slice(0, 2).map(act => act.title).filter(Boolean);
     
     // Generate summary based on day number and content
     if (dayNumber === 0) {
-      return `準備出發，整理行李並前往機場，開始13天西班牙深度旅行冒險`;
+      return `準備出發，整理行李並前往機場，開始${totalDays}天西班牙深度旅行冒險`;
     }
     
-    if (dayNumber === 13) {
+    if (dayNumber === totalDays - 1) {
       return `完成西班牙旅程，帶著滿滿回憶返回台灣，結束難忘的深度之旅`;
     }
     

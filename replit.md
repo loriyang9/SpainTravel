@@ -1,6 +1,6 @@
 # Overview
 
-This is a Spanish travel itinerary application built as a full-stack web app featuring a React frontend with a Node.js/Express backend. The application provides a comprehensive travel planning interface for a 13-day Spain autumn journey, including daily itineraries, key attractions, travel reminders, weather information, and countdown timers. The app uses modern web technologies with TypeScript throughout the stack and features a warm, autumn-themed design system with golden/amber color schemes.
+This is a Spanish travel itinerary application built as a full-stack web app featuring a React frontend with a Node.js/Express backend. The application provides a comprehensive travel planning interface for a multi-day Spain autumn journey, including daily itineraries, key attractions, travel reminders, weather information, and countdown timers. The trip duration is dynamically calculated from Google Sheets data. The app uses modern web technologies with TypeScript throughout the stack and features a warm, autumn-themed design system with golden/amber color schemes.
 
 # User Preferences
 
