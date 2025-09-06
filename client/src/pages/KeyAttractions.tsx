@@ -130,6 +130,7 @@ const KeyAttractions = () => {
                 city={attraction.city}
                 category={attraction.category}
                 description={attraction.description}
+                additionalInfo={attraction.additionalInfo}
                 imageUrl={attraction.imageUrl}
               />
             ))}

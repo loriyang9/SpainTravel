@@ -518,7 +518,8 @@ class GoogleSheetsService {
           nameEn: rowData[2] || '',
           city: rowData[3] || '',
           category: rowData[4] || '其他',
-          description: rowData[6] || rowData[5] || '', // 其他補充 or 重點特色
+          description: rowData[5] || '', // 重點特色
+          additionalInfo: rowData[6] || '', // 其他補充
           visitDuration: '2-3小時',
           ticketRequired: '建議預訂',
           imageUrl: this.getAttractionImageUrl(rowData[1] || ''),
