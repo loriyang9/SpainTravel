@@ -31,8 +31,9 @@ const Home = () => {
   
   // Carousel setup for itinerary preview
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
-    slidesToScroll: 1,
-    containScroll: 'trimSnaps'
+    dragFree: true,
+    containScroll: 'trimSnaps',
+    slidesToScroll: 1
   });
 
   const scrollPrev = useCallback(() => {

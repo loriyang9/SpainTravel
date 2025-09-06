@@ -23,7 +23,7 @@ const ItineraryCard = ({
   onClick 
 }: ItineraryCardProps) => {
   return (
-    <div className="bg-card rounded-xl overflow-hidden shadow-lg card-hover h-full flex flex-col" data-testid={`itinerary-card-day-${dayNumber}`}>
+    <div className="bg-card rounded-xl overflow-hidden shadow-md h-full flex flex-col transition-transform duration-200 hover:scale-105" data-testid={`itinerary-card-day-${dayNumber}`}>
       <img 
         src={imageUrl} 
         alt={title}
