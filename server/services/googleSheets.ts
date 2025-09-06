@@ -310,11 +310,11 @@ class GoogleSheetsService {
 
 範例風格：「漫步在巴薩隆納的蘭布拉大道，探訪高第的建築奇蹟聖家堂，在哥德區的石板路上感受中世紀的浪漫，品嚐道地的加泰隆尼亞美食，讓藝術與歷史在每個轉角與你相遇」`;
     
-    console.log(`🚀 Making OpenAI API call with model: gpt-5`);
+    console.log(`🚀 Making OpenAI API call with model: gpt-4o`);
     
-    // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+    // Using gpt-4o for better text generation stability and creativity
     const response = await this.openai!.chat.completions.create({
-      model: "gpt-5",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
@@ -325,7 +325,8 @@ class GoogleSheetsService {
           content: prompt
         }
       ],
-      max_completion_tokens: 200
+      max_tokens: 200,
+      temperature: 0.7
     });
     
     console.log(`📨 OpenAI API response:`, {
