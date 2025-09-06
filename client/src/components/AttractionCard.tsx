@@ -26,33 +26,44 @@ const AttractionCard = ({
   onLearnMore
 }: AttractionCardProps) => {
   const getCategoryColor = (category: string) => {
+    // 根據 Google Sheet 原始分類設定顏色
     switch (category) {
-      case "world_heritage":
-        return "primary";
-      case "architecture":
-        return "chart-1";
-      case "museum":
-        return "chart-2";
-      case "park":
-        return "chart-3";
+      case "景點":
+        return "bg-blue-500";
+      case "市場":
+        return "bg-green-500";
+      case "步道":
+        return "bg-emerald-500";
+      case "購物中心":
+        return "bg-purple-500";
+      case "餐廳與小酒館":
+        return "bg-red-500";
+      case "早餐／早午餐":
+        return "bg-orange-500";
+      case "精品咖啡／咖啡館":
+        return "bg-amber-600";
+      case "小店":
+        return "bg-pink-500";
+      case "教堂":
+        return "bg-indigo-500";
+      case "博物館":
+        return "bg-teal-500";
+      case "宮殿":
+        return "bg-yellow-600";
+      case "公園":
+        return "bg-lime-500";
+      case "古蹟":
+        return "bg-stone-500";
+      case "建築":
+        return "bg-gray-600";
       default:
-        return "secondary";
+        return "bg-slate-500";
     }
   };
 
   const getCategoryLabel = (category: string) => {
-    switch (category) {
-      case "world_heritage":
-        return "世界遺產";
-      case "architecture":
-        return "建築奇蹟";
-      case "museum":
-        return "博物館";
-      case "park":
-        return "藝術公園";
-      default:
-        return "景點";
-    }
+    // 直接使用 Google Sheet 中的原始分類名稱
+    return category || "其他";
   };
 
   return (
@@ -67,7 +78,7 @@ const AttractionCard = ({
         <div className="flex items-center mb-4">
           <Badge 
             variant="secondary"
-            className={`bg-${getCategoryColor(category)} text-white mr-3`}
+            className={`${getCategoryColor(category)} text-white mr-3 hover:opacity-80 transition-opacity`}
             data-testid={`category-badge-${id}`}
           >
             {getCategoryLabel(category)}
