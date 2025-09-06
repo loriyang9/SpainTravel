@@ -43,7 +43,7 @@ const ItineraryCard = ({
           </span>
         </div>
         <h3 className="text-xl font-semibold mb-2 text-card-foreground" data-testid={`title-${dayNumber}`}>
-          {title}
+          Day {dayNumber} - {title}
         </h3>
         <p className="text-muted-foreground mb-4 flex-grow line-clamp-3 text-sm leading-relaxed" data-testid={`description-${dayNumber}`}>
           {description}
