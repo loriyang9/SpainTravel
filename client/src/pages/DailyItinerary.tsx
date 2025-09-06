@@ -72,11 +72,10 @@ const DailyItinerary = () => {
                       data-testid={`day-selector-${day.dayNumber}`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold">Day {day.dayNumber}</span>
+                        <span className="font-semibold">Day {day.dayNumber} - {day.title}</span>
                         <span className="text-sm opacity-80">{day.date}</span>
                       </div>
                       <div className="text-sm opacity-80 mt-1">{day.city}</div>
-                      <div className="text-sm text-primary font-medium mt-1">{day.title}</div>
                     </button>
                   ))}
                 </div>
@@ -211,8 +210,8 @@ const DailyItinerary = () => {
                 <div className="flex items-center justify-between pt-6 border-t">
                   <Button
                     variant="outline"
-                    onClick={() => setSelectedDay(Math.max(1, selectedDay - 1))}
-                    disabled={selectedDay === 1}
+                    onClick={() => setSelectedDay(Math.max(0, selectedDay - 1))}
+                    disabled={selectedDay === 0}
                     data-testid="previous-day"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
@@ -220,8 +219,8 @@ const DailyItinerary = () => {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => setSelectedDay(Math.min(dailyItinerary.length, selectedDay + 1))}
-                    disabled={selectedDay === dailyItinerary.length}
+                    onClick={() => setSelectedDay(Math.min(dailyItinerary.length - 1, selectedDay + 1))}
+                    disabled={selectedDay >= dailyItinerary.length - 1}
                     data-testid="next-day"
                   >
                     下一天
