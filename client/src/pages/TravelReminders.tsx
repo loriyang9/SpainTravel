@@ -130,36 +130,45 @@ const TravelReminders = () => {
 
               {/* Content */}
               {reminder.title === "出發前準備" ? (
-                // 出發前準備：顯示checkbox
+                // 出發前準備：每個分段都有checkbox
                 <>
                   <ul className="space-y-3">
-                    {reminder.items.map((item, index) => {
-                      const itemKey = `${reminder.id}-${index}`;
-                      const isChecked = checkedItems[itemKey] || false;
+                    {reminder.items.map((item, itemIndex) => {
+                      // 將每一行分割成獨立的checklist項目
+                      const lines = item.text.split('\n').filter(line => line.trim());
                       
-                      return (
-                        <li key={index} className="flex items-start space-x-3" data-testid={`reminder-item-${reminder.id}-${index}`}>
-                          <Checkbox
-                            checked={isChecked}
-                            onCheckedChange={() => handleItemCheck(reminder.id, index)}
-                            className="mt-0.5"
-                            data-testid={`checkbox-${reminder.id}-${index}`}
-                          />
-                          <div 
-                            className={`text-sm ${isChecked 
-                              ? 'line-through text-muted-foreground' 
-                              : 'text-foreground'
-                            }`}
-                          >
-                            {item.text.split('\n').map((line, lineIndex) => (
-                              <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
-                                {line}
-                              </div>
-                            ))}
-                          </div>
-                        </li>
-                      );
-                    })}
+                      return lines.map((line, lineIndex) => {
+                        const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
+                        const isChecked = checkedItems[itemKey] || false;
+                        
+                        return (
+                          <li key={`${itemIndex}-${lineIndex}`} className="flex items-start space-x-3" data-testid={`reminder-item-${reminder.id}-${itemIndex}-${lineIndex}`}>
+                            <Checkbox
+                              checked={isChecked}
+                              onCheckedChange={() => {
+                                const newCheckedItems = { ...checkedItems };
+                                if (isChecked) {
+                                  delete newCheckedItems[itemKey];
+                                } else {
+                                  newCheckedItems[itemKey] = true;
+                                }
+                                setCheckedItems(newCheckedItems);
+                              }}
+                              className="mt-0.5"
+                              data-testid={`checkbox-${reminder.id}-${itemIndex}-${lineIndex}`}
+                            />
+                            <div 
+                              className={`text-sm ${isChecked 
+                                ? 'line-through text-muted-foreground' 
+                                : 'text-foreground'
+                              }`}
+                            >
+                              {line}
+                            </div>
+                          </li>
+                        );
+                      });
+                    }).flat()}
                   </ul>
 
                   {/* Progress for this card */}
@@ -167,14 +176,49 @@ const TravelReminders = () => {
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">進度</span>
                       <span className="font-medium">
-                        {reminder.items.filter((_, index) => checkedItems[`${reminder.id}-${index}`]).length} / {reminder.items.length}
+                        {(() => {
+                          // 計算所有分段的總數和已完成數
+                          let totalLines = 0;
+                          let checkedLines = 0;
+                          
+                          reminder.items.forEach((item, itemIndex) => {
+                            const lines = item.text.split('\n').filter(line => line.trim());
+                            totalLines += lines.length;
+                            
+                            lines.forEach((_, lineIndex) => {
+                              const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
+                              if (checkedItems[itemKey]) {
+                                checkedLines++;
+                              }
+                            });
+                          });
+                          
+                          return `${checkedLines} / ${totalLines}`;
+                        })()}
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2 mt-2">
                       <div 
                         className="bg-primary h-2 rounded-full transition-all duration-300" 
                         style={{ 
-                          width: `${(reminder.items.filter((_, index) => checkedItems[`${reminder.id}-${index}`]).length / reminder.items.length) * 100}%` 
+                          width: `${(() => {
+                            let totalLines = 0;
+                            let checkedLines = 0;
+                            
+                            reminder.items.forEach((item, itemIndex) => {
+                              const lines = item.text.split('\n').filter(line => line.trim());
+                              totalLines += lines.length;
+                              
+                              lines.forEach((_, lineIndex) => {
+                                const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
+                                if (checkedItems[itemKey]) {
+                                  checkedLines++;
+                                }
+                              });
+                            });
+                            
+                            return totalLines > 0 ? (checkedLines / totalLines) * 100 : 0;
+                          })()}%` 
                         }}
                       ></div>
                     </div>
