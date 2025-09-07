@@ -190,11 +190,6 @@ const TravelReminders = () => {
           ))
         }
 
-        {/* 其他提醒事項標題 */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-foreground font-serif mb-2">旅遊提醒與注意事項</h2>
-          <p className="text-muted-foreground">重要資訊與實用建議</p>
-        </div>
 
         {/* 其他提醒事項 Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="reminders-grid">
