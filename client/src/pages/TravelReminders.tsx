@@ -15,14 +15,12 @@ const TravelReminders = () => {
   // 頁面載入時自動滾動到頂部並清理狀態
   useEffect(() => {
     window.scrollTo(0, 0);
-    // 清除可能的舊狀態
-    console.log('TravelReminders 組件載入，清空checkedItems狀態');
+    // 清除可能的舊狀態，確保進度條從0%開始
     setCheckedItems({});
   }, []);
   
   // 重置所有勾選狀態的函數
   const resetAllChecked = () => {
-    console.log('重置所有勾選狀態');
     setCheckedItems({});
   };
   
@@ -209,14 +207,6 @@ const TravelReminders = () => {
                     }
                     
                     const progressPercentage = totalLines > 0 ? Math.round((checkedLines / totalLines) * 100) : 0;
-                    
-                    // 調試信息
-                    console.log(`進度條調試 - ${reminder.title}:`, {
-                      totalLines,
-                      checkedLines,
-                      progressPercentage,
-                      checkedItems: Object.keys(checkedItems).filter(key => key.startsWith(reminder.id))
-                    });
                     
                     return (
                       <div className="mt-4 pt-4 border-t">
