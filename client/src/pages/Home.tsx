@@ -103,24 +103,8 @@ const Home = () => {
     return selectedAttractions.slice(0, 6); // 確保只返回6個
   }, [itinerary, attractionsData, actualTripDays]);
   
-  // Show selected reminders for preview
-  const targetReminders = ["出發前準備", "防盜安全", "天氣與穿著", "關於時間"];
-  const previewReminders = remindersData ? 
-    remindersData
-      .filter(reminder => targetReminders.includes(reminder.title))
-      .map(reminder => {
-        // For non-preparation reminders, limit to first 2 segments
-        if (reminder.title !== "出發前準備") {
-          const limitedItems = reminder.items.map(item => {
-            const segments = item.text.split('\n').filter(line => line.trim());
-            const firstTwoSegments = segments.slice(0, 2).join('\n');
-            return { ...item, text: firstTwoSegments };
-          });
-          return { ...reminder, items: limitedItems };
-        }
-        return reminder;
-      })
-      .sort((a, b) => targetReminders.indexOf(a.title) - targetReminders.indexOf(b.title)) : [];
+  // Show all reminders from Google Sheets for preview
+  const previewReminders = remindersData || [];
   
   // Carousel setup for itinerary preview
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
@@ -335,7 +319,7 @@ const Home = () => {
             <p className="text-lg text-muted-foreground">重要注意事項與出發前檢查</p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
             {previewReminders.map((reminder) => (
               <ReminderCard
                 key={reminder.id}
@@ -344,6 +328,7 @@ const Home = () => {
                 items={reminder.items}
                 icon={reminder.icon}
                 priority={reminder.priority}
+                isPreview={true}
               />
             ))}
           </div>

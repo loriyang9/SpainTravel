@@ -1,5 +1,7 @@
-import { Check } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 import * as Icons from "lucide-react";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
 
 interface ReminderItem {
   text: string;
@@ -12,9 +14,10 @@ interface ReminderCardProps {
   items: ReminderItem[];
   icon: string;
   priority: number;
+  isPreview?: boolean;
 }
 
-const ReminderCard = ({ id, title, items, icon, priority }: ReminderCardProps) => {
+const ReminderCard = ({ id, title, items, icon, priority, isPreview = false }: ReminderCardProps) => {
   // Dynamically get icon component
   const IconComponent = (Icons as any)[icon] || Icons.AlertCircle;
   
@@ -67,12 +70,10 @@ const ReminderCard = ({ id, title, items, icon, priority }: ReminderCardProps) =
       </div>
       
       <div className="text-muted-foreground space-y-2 text-sm">
-        {/* 針對特定分類限制顯示前4個要點 */}
+        {/* 預覽模式只顯示前兩行，詳細模式顯示全部 */}
         {items.map((item, index) => {
-          // 對於防盜安全、天氣與穿著、關於時間，只顯示前4個要點
-          const shouldLimit = ["防盜安全", "天氣與穿著", "關於時間"].includes(title);
           const lines = item.text.split('\n').filter(line => line.trim());
-          const displayLines = shouldLimit ? lines.slice(0, 4) : lines;
+          const displayLines = isPreview ? lines.slice(0, 2) : lines;
           
           return (
             <div key={index} className="text-sm" data-testid={`reminder-item-${id}-${index}`}>
@@ -81,10 +82,32 @@ const ReminderCard = ({ id, title, items, icon, priority }: ReminderCardProps) =
                   {line}
                 </div>
               ))}
+              {/* 在預覽模式下顯示省略號 */}
+              {isPreview && lines.length > 2 && (
+                <div className="mt-2 text-muted-foreground/60">
+                  ...
+                </div>
+              )}
             </div>
           );
         })}
       </div>
+      
+      {/* 在預覽模式下顯示查看詳情連結 */}
+      {isPreview && (
+        <div className="mt-4 pt-4 border-t border-border">
+          <Link href={`/reminders#${id}`}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-primary hover:text-primary/80 p-0 h-auto font-normal"
+              data-testid={`view-details-${id}`}
+            >
+              查看詳情 →
+            </Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
