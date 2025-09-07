@@ -70,27 +70,7 @@ const TravelReminders = () => {
     }
   };
 
-  const handleItemCheck = (reminderId: string, itemIndex: number) => {
-    const key = `${reminderId}-${itemIndex}`;
-    setCheckedItems(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
-
-  const getTotalItems = () => {
-    return travelReminders.reduce((total, reminder) => total + reminder.items.length, 0);
-  };
-
-  const getCheckedItems = () => {
-    return Object.values(checkedItems).filter(Boolean).length;
-  };
-
-  const getCompletionPercentage = () => {
-    const total = getTotalItems();
-    const checked = getCheckedItems();
-    return total > 0 ? Math.round((checked / total) * 100) : 0;
-  };
+  // 這些函數已經不需要了，因為進度計算現在在個別卡片內部處理
 
   return (
     <div className="min-h-screen pt-20" data-testid="travel-reminders-page">
@@ -111,7 +91,7 @@ const TravelReminders = () => {
 
         {/* Reminders Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="reminders-grid">
-          {travelReminders.map((reminder) => (
+          {travelReminders.map((reminder: TravelReminder) => (
             <div key={reminder.id} className="bg-card rounded-xl p-6 shadow-lg card-hover">
               {/* Icon and Title */}
               <div className="flex items-center mb-4">
@@ -148,11 +128,11 @@ const TravelReminders = () => {
                 // 出發前準備：每個分段都有checkbox
                 <>
                   <ul className="space-y-3">
-                    {reminder.items.map((item, itemIndex) => {
+                    {reminder.items.map((item: any, itemIndex: number) => {
                       // 將每一行分割成獨立的checklist項目
-                      const lines = item.text.split('\n').filter(line => line.trim());
+                      const lines = item.text.split('\n').filter((line: string) => line.trim());
                       
-                      return lines.map((line, lineIndex) => {
+                      return lines.map((line: string, lineIndex: number) => {
                         const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
                         const isChecked = checkedItems[itemKey] || false;
                         
@@ -192,11 +172,11 @@ const TravelReminders = () => {
                     let totalLines = 0;
                     let checkedLines = 0;
                     
-                    reminder.items.forEach((item, itemIndex) => {
-                      const lines = item.text.split('\n').filter(line => line.trim());
+                    reminder.items.forEach((item: any, itemIndex: number) => {
+                      const lines = item.text.split('\n').filter((line: string) => line.trim());
                       totalLines += lines.length;
                       
-                      lines.forEach((_, lineIndex) => {
+                      lines.forEach((_: string, lineIndex: number) => {
                         const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
                         if (checkedItems[itemKey]) {
                           checkedLines++;
@@ -225,9 +205,9 @@ const TravelReminders = () => {
               ) : (
                 // 其他分類：只顯示內容
                 <div className="space-y-3">
-                  {reminder.items.map((item, index) => (
+                  {reminder.items.map((item: any, index: number) => (
                     <div key={index} className="text-sm text-foreground" data-testid={`reminder-item-${reminder.id}-${index}`}>
-                      {item.text.split('\n').map((line, lineIndex) => (
+                      {item.text.split('\n').map((line: string, lineIndex: number) => (
                         <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
                           {line}
                         </div>
