@@ -73,31 +73,11 @@ const ReminderCard = ({ id, title, items, icon, priority, isPreview = false }: R
         {/* 預覽模式只顯示前兩行，詳細模式顯示全部 */}
         {items.map((item, index) => {
           if (isPreview) {
-            // 預覽模式：保持分行，但限制總字符數為120字符
+            // 預覽模式：統一顯示3行，保持視覺一致
             const lines = item.text.split('\n').filter(line => line.trim());
-            let totalChars = 0;
-            const displayLines = [];
-            let hasMore = false;
-            
-            for (const line of lines) {
-              if (totalChars + line.length <= 120) {
-                displayLines.push(line);
-                totalChars += line.length;
-              } else {
-                // 如果這行會超過限制，截斷並標記有更多內容
-                const remainingChars = 120 - totalChars;
-                if (remainingChars > 0) {
-                  displayLines.push(line.substring(0, remainingChars));
-                }
-                hasMore = true;
-                break;
-              }
-            }
-            
-            // 如果還有更多行沒顯示，也標記有更多內容
-            if (!hasMore && lines.length > displayLines.length) {
-              hasMore = true;
-            }
+            const maxLines = 3;
+            const displayLines = lines.slice(0, maxLines);
+            const hasMore = lines.length > maxLines;
             
             return (
               <div key={index} className="text-sm" data-testid={`reminder-item-${id}-${index}`}>
