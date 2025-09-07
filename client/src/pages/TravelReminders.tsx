@@ -12,11 +12,9 @@ const TravelReminders = () => {
   const [selectedPriority, setSelectedPriority] = useState("全部");
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   
-  // 頁面載入時自動滾動到頂部並清理狀態
+  // 頁面載入時自動滾動到頂部
   useEffect(() => {
     window.scrollTo(0, 0);
-    // 清除可能的舊狀態，確保進度條從0%開始
-    setCheckedItems({});
   }, []);
   
   
@@ -194,17 +192,6 @@ const TravelReminders = () => {
                     
                     const progressPercentage = totalLines > 0 ? Math.round((checkedLines / totalLines) * 100) : 0;
                     
-                    // 強制調試 - 只對出發前準備顯示
-                    if (reminder.title === "出發前準備") {
-                      console.log("🚨 出發前準備調試:", {
-                        totalLines,
-                        checkedLines,
-                        progressPercentage,
-                        shouldShowProgress: progressPercentage > 0,
-                        allCheckedItemsKeys: Object.keys(checkedItems),
-                        reminderItems: reminder.items
-                      });
-                    }
                     
                     return (
                       <div className="mt-4 pt-4 border-t">
