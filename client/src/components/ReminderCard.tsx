@@ -43,7 +43,7 @@ const ReminderCard = ({ id, title, items, icon, priority }: ReminderCardProps) =
             // 根據標題直接映射圖標
             switch (title) {
               case "出發前準備":
-                return "🧳";
+                return "✅";
               case "防盜安全":
                 return "🛡️";
               case "天氣與穿著":
@@ -62,36 +62,21 @@ const ReminderCard = ({ id, title, items, icon, priority }: ReminderCardProps) =
           })()}
         </div>
         <h3 className="text-xl font-semibold text-card-foreground" data-testid={`reminder-title-${id}`}>
-          {title}
+          {title === "出發前準備" ? "出發前準備確認表" : title}
         </h3>
       </div>
       
       <div className="text-muted-foreground space-y-2 text-sm">
-        {title === "出發前準備" ? (
-          // 出發前準備：顯示checkbox樣式
-          items.map((item, index) => {
-            const lines = item.text.split('\n').filter(line => line.trim());
-            return lines.map((line, lineIndex) => (
-              <div key={`${index}-${lineIndex}`} className="flex items-start" data-testid={`reminder-item-${id}-${index}-${lineIndex}`}>
-                <div className="w-4 h-4 mr-2 mt-0.5 border border-gray-300 rounded flex-shrink-0"></div>
-                <div className={item.completed ? "line-through opacity-60" : ""}>
-                  {line}
-                </div>
+        {/* 所有分類都顯示純文字，限制只顯示前4個項目 */}
+        {items.slice(0, 4).map((item, index) => (
+          <div key={index} className="text-sm" data-testid={`reminder-item-${id}-${index}`}>
+            {item.text.split('\n').map((line, lineIndex) => (
+              <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
+                {line}
               </div>
-            ));
-          }).flat()
-        ) : (
-          // 其他分類：只顯示純文字
-          items.map((item, index) => (
-            <div key={index} className="text-sm" data-testid={`reminder-item-${id}-${index}`}>
-              {item.text.split('\n').map((line, lineIndex) => (
-                <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
-                  {line}
-                </div>
-              ))}
-            </div>
-          ))
-        )}
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );
