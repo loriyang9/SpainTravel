@@ -202,13 +202,14 @@ const TravelReminders = () => {
                           <span className="font-medium">{checkedLines} / {totalLines}</span>
                         </div>
                         <div className="w-full bg-muted rounded-full h-2 mt-2">
-                          <div 
-                            className="h-2 rounded-full transition-all duration-300"
-                            style={{ 
-                              width: `${Math.max(0, Math.min(100, progressPercentage))}%`,
-                              backgroundColor: progressPercentage > 0 ? 'hsl(var(--primary))' : 'transparent'
-                            }}
-                          ></div>
+                          {progressPercentage > 0 && (
+                            <div 
+                              className="h-2 rounded-full transition-all duration-300 bg-primary"
+                              style={{ 
+                                width: `${Math.max(0, Math.min(100, progressPercentage))}%`
+                              }}
+                            ></div>
+                          )}
                         </div>
                       </div>
                     );
@@ -217,7 +218,7 @@ const TravelReminders = () => {
               ) : (
                 // 其他分類：只顯示內容
                 <div className="space-y-3">
-                  {reminder.items.map((item: any, index: number) => (
+                  {(reminder.items as any[]).map((item: any, index: number) => (
                     <div key={index} className="text-sm text-foreground" data-testid={`reminder-item-${reminder.id}-${index}`}>
                       {item.text.split('\n').map((line: string, lineIndex: number) => (
                         <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
