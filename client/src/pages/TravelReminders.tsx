@@ -241,30 +241,6 @@ const TravelReminders = () => {
             ))}
         </div>
 
-        {/* Important Notes */}
-        <div className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg" data-testid="important-notes">
-          <h3 className="text-lg font-semibold mb-4 flex items-center text-yellow-800 dark:text-yellow-200">
-            ⚠️ 重要提醒
-          </h3>
-          <div className="grid md:grid-cols-2 gap-4 text-sm text-yellow-700 dark:text-yellow-300">
-            <div>
-              <h4 className="font-medium mb-2">出發前7天</h4>
-              <p>確認「出發前準備確認表」的項目都已完成，特別是證件和保險相關事項。</p>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">出發前3天</h4>
-              <p>完成所有打包準備，確認天氣預報，準備適合的衣物。</p>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">出發當天</h4>
-              <p>提早2-3小時到達機場，隨身攜帶重要證件和藥品。</p>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">抵達西班牙後</h4>
-              <p>第一時間確認住宿、購買交通卡，並測試通訊設備。</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
