@@ -187,57 +187,40 @@ const TravelReminders = () => {
                   </ul>
 
                   {/* Progress for this card */}
-                  <div className="mt-4 pt-4 border-t">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">進度</span>
-                      <span className="font-medium">
-                        {(() => {
-                          // 計算所有分段的總數和已完成數
-                          let totalLines = 0;
-                          let checkedLines = 0;
-                          
-                          reminder.items.forEach((item, itemIndex) => {
-                            const lines = item.text.split('\n').filter(line => line.trim());
-                            totalLines += lines.length;
-                            
-                            lines.forEach((_, lineIndex) => {
-                              const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
-                              if (checkedItems[itemKey]) {
-                                checkedLines++;
-                              }
-                            });
-                          });
-                          
-                          return `${checkedLines} / ${totalLines}`;
-                        })()}
-                      </span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-primary h-2 rounded-full transition-all duration-300" 
-                        style={{ 
-                          width: `${(() => {
-                            let totalLines = 0;
-                            let checkedLines = 0;
-                            
-                            reminder.items.forEach((item, itemIndex) => {
-                              const lines = item.text.split('\n').filter(line => line.trim());
-                              totalLines += lines.length;
-                              
-                              lines.forEach((_, lineIndex) => {
-                                const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
-                                if (checkedItems[itemKey]) {
-                                  checkedLines++;
-                                }
-                              });
-                            });
-                            
-                            return totalLines > 0 ? (checkedLines / totalLines) * 100 : 0;
-                          })()}%` 
-                        }}
-                      ></div>
-                    </div>
-                  </div>
+                  {(() => {
+                    // 計算所有分段的總數和已完成數
+                    let totalLines = 0;
+                    let checkedLines = 0;
+                    
+                    reminder.items.forEach((item, itemIndex) => {
+                      const lines = item.text.split('\n').filter(line => line.trim());
+                      totalLines += lines.length;
+                      
+                      lines.forEach((_, lineIndex) => {
+                        const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
+                        if (checkedItems[itemKey]) {
+                          checkedLines++;
+                        }
+                      });
+                    });
+                    
+                    const progressPercentage = totalLines > 0 ? (checkedLines / totalLines) * 100 : 0;
+                    
+                    return (
+                      <div className="mt-4 pt-4 border-t">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">進度</span>
+                          <span className="font-medium">{checkedLines} / {totalLines}</span>
+                        </div>
+                        <div className="w-full bg-muted rounded-full h-2 mt-2">
+                          <div 
+                            className="bg-primary h-2 rounded-full transition-all duration-300" 
+                            style={{ width: `${progressPercentage}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </>
               ) : (
                 // 其他分類：只顯示內容
