@@ -73,24 +73,14 @@ const ReminderCard = ({ id, title, items, icon, priority, isPreview = false }: R
         {/* 預覽模式只顯示前兩行，詳細模式顯示全部 */}
         {items.map((item, index) => {
           if (isPreview) {
-            // 預覽模式：統一顯示3行，保持視覺一致
-            const lines = item.text.split('\n').filter(line => line.trim());
-            const maxLines = 3;
-            const displayLines = lines.slice(0, maxLines);
-            const hasMore = lines.length > maxLines;
+            // 預覽模式：統一顯示20字，保持一致性
+            const fullText = item.text.replace(/\n/g, ' ').trim();
+            const previewText = fullText.length > 20 ? fullText.substring(0, 20) : fullText;
+            const hasMore = fullText.length > 20;
             
             return (
               <div key={index} className="text-sm" data-testid={`reminder-item-${id}-${index}`}>
-                {displayLines.map((line, lineIndex) => (
-                  <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
-                    {line}
-                  </div>
-                ))}
-                {hasMore && (
-                  <div className="mt-2 text-muted-foreground/60">
-                    ...
-                  </div>
-                )}
+                <div>{previewText}{hasMore ? '...' : ''}</div>
               </div>
             );
           } else {
