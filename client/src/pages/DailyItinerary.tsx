@@ -75,33 +75,39 @@ const DailyItinerary = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {dailyItinerary.map((day) => (
-                    <button
-                      key={day.dayNumber}
-                      onClick={() => setSelectedDay(day.dayNumber)}
-                      className={`w-full text-left p-3 rounded-lg transition-colors ${
-                        selectedDay === day.dayNumber
-                          ? 'bg-primary text-primary-foreground'
-                          : 'hover:bg-accent'
-                      }`}
-                      data-testid={`day-selector-${day.dayNumber}`}
-                    >
-                      <div className="font-semibold">Day {day.dayNumber} - {day.title}</div>
-                      <div className="text-sm opacity-80 mt-1">
-                        {day.city}｜{(() => {
-                          // 將日期從 "2025年10月4日 星期六" 轉換為 "2025/10/4 (六)"
-                          const dateStr = day.date;
-                          const match = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日 星期(.)/);
-                          if (match) {
-                            const [, year, month, date, weekday] = match;
-                            return `${year}/${month}/${date} (${weekday})`;
-                          }
-                          return dateStr; // 如果格式不匹配，返回原始格式
-                        })()}
-                      </div>
-                    </button>
-                  ))}
+                <div className="relative">
+                  {/* 響應式容器：大螢幕完整高度，小螢幕固定高度 */}
+                  <div className="lg:space-y-2 lg:max-h-none lg:overflow-visible max-h-[200px] overflow-y-auto space-y-2">
+                    {dailyItinerary.map((day) => (
+                      <button
+                        key={day.dayNumber}
+                        onClick={() => setSelectedDay(day.dayNumber)}
+                        className={`w-full text-left p-3 rounded-lg transition-colors ${
+                          selectedDay === day.dayNumber
+                            ? 'bg-primary text-primary-foreground'
+                            : 'hover:bg-accent'
+                        }`}
+                        data-testid={`day-selector-${day.dayNumber}`}
+                      >
+                        <div className="font-semibold">Day {day.dayNumber} - {day.title}</div>
+                        <div className="text-sm opacity-80 mt-1">
+                          {day.city}｜{(() => {
+                            // 將日期從 "2025年10月4日 星期六" 轉換為 "2025/10/4 (六)"
+                            const dateStr = day.date;
+                            const match = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日 星期(.)/);
+                            if (match) {
+                              const [, year, month, date, weekday] = match;
+                              return `${year}/${month}/${date} (${weekday})`;
+                            }
+                            return dateStr; // 如果格式不匹配，返回原始格式
+                          })()}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* 漸變遮罩：只在小螢幕顯示 */}
+                  <div className="lg:hidden absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-card to-transparent pointer-events-none" />
                 </div>
               </CardContent>
             </Card>
