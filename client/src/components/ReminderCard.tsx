@@ -67,16 +67,23 @@ const ReminderCard = ({ id, title, items, icon, priority }: ReminderCardProps) =
       </div>
       
       <div className="text-muted-foreground space-y-2 text-sm">
-        {/* 所有分類都顯示純文字，限制只顯示前4個項目 */}
-        {items.slice(0, 4).map((item, index) => (
-          <div key={index} className="text-sm" data-testid={`reminder-item-${id}-${index}`}>
-            {item.text.split('\n').map((line, lineIndex) => (
-              <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
-                {line}
-              </div>
-            ))}
-          </div>
-        ))}
+        {/* 針對特定分類限制顯示前4個要點 */}
+        {items.map((item, index) => {
+          // 對於防盜安全、天氣與穿著、關於時間，只顯示前4個要點
+          const shouldLimit = ["防盜安全", "天氣與穿著", "關於時間"].includes(title);
+          const lines = item.text.split('\n').filter(line => line.trim());
+          const displayLines = shouldLimit ? lines.slice(0, 4) : lines;
+          
+          return (
+            <div key={index} className="text-sm" data-testid={`reminder-item-${id}-${index}`}>
+              {displayLines.map((line, lineIndex) => (
+                <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
+                  {line}
+                </div>
+              ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
