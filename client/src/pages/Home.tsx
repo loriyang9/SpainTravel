@@ -332,7 +332,7 @@ const Home = () => {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground font-serif">
               旅遊提醒事項
             </h2>
-            <p className="text-lg text-muted-foreground">重要注意事項與實用旅遊貼士</p>
+            <p className="text-lg text-muted-foreground">重要注意事項與出發前檢查</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 mb-8">

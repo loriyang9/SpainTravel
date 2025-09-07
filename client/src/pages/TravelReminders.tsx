@@ -104,7 +104,7 @@ const TravelReminders = () => {
             </Button>
           </Link>
           <h1 className="text-4xl font-bold text-foreground font-serif mb-4">旅遊提醒事項</h1>
-          <p className="text-lg text-muted-foreground">重要注意事項與實用旅遊貼士</p>
+          <p className="text-lg text-muted-foreground">重要注意事項與出發前檢查</p>
         </div>
 
 
