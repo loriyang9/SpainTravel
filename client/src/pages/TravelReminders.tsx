@@ -199,7 +199,7 @@ const TravelReminders = () => {
                           <span className="text-muted-foreground">進度</span>
                           <span className="font-medium">{checkedLines} / {totalLines}</span>
                         </div>
-                        <div className="w-full bg-muted rounded-full h-2 mt-2">
+                        <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 mt-2">
                           {progressPercentage > 0 && (
                             <div 
                               className="h-2 rounded-full transition-all duration-300 bg-primary"
