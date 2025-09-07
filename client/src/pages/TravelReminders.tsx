@@ -116,12 +116,27 @@ const TravelReminders = () => {
               {/* Icon and Title */}
               <div className="flex items-center mb-4">
                 <div className="text-2xl mr-3">
-                  {reminder.icon === "Passport" && "🛂"}
-                  {reminder.icon === "CreditCard" && "💳"}
-                  {reminder.icon === "Luggage" && "🧳"}
-                  {reminder.icon === "Smartphone" && "📱"}
-                  {reminder.icon === "Shield" && "🛡️"}
-                  {reminder.icon === "UtensilsCrossed" && "🍽️"}
+                  {(() => {
+                    // 根據標題直接映射圖標
+                    switch (reminder.title) {
+                      case "出發前準備":
+                        return "🧳";
+                      case "防盜安全":
+                        return "🛡️";
+                      case "天氣與穿著":
+                        return "🌤️";
+                      case "關於時間":
+                        return "⏰";
+                      case "食物與水":
+                        return "🍽️";
+                      case "小費":
+                        return "💰";
+                      case "廁所":
+                        return "🚻";
+                      default:
+                        return "📋"; // 預設圖標
+                    }
+                  })()}
                 </div>
                 <h3 className="text-xl font-semibold text-card-foreground" data-testid={`reminder-title-${reminder.id}`}>
                   {reminder.title}
