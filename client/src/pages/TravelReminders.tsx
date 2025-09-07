@@ -12,10 +12,19 @@ const TravelReminders = () => {
   const [selectedPriority, setSelectedPriority] = useState("全部");
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   
-  // 頁面載入時自動滾動到頂部
+  // 頁面載入時自動滾動到頂部並清理狀態
   useEffect(() => {
     window.scrollTo(0, 0);
+    // 清除可能的舊狀態
+    console.log('TravelReminders 組件載入，清空checkedItems狀態');
+    setCheckedItems({});
   }, []);
+  
+  // 重置所有勾選狀態的函數
+  const resetAllChecked = () => {
+    console.log('重置所有勾選狀態');
+    setCheckedItems({});
+  };
   
   const { data: reminders, isLoading } = useQuery<TravelReminder[]>({
     queryKey: ['/api/reminders'],
@@ -85,6 +94,16 @@ const TravelReminders = () => {
           </Link>
           <h1 className="text-4xl font-bold text-foreground font-serif mb-4">旅遊提醒事項</h1>
           <p className="text-lg text-muted-foreground">重要注意事項與出發前檢查</p>
+          
+          {/* Reset button for testing */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={resetAllChecked}
+            className="mt-4"
+          >
+            重置所有勾選
+          </Button>
         </div>
 
 
@@ -172,19 +191,32 @@ const TravelReminders = () => {
                     let totalLines = 0;
                     let checkedLines = 0;
                     
-                    reminder.items.forEach((item: any, itemIndex: number) => {
-                      const lines = item.text.split('\n').filter((line: string) => line.trim());
-                      totalLines += lines.length;
-                      
-                      lines.forEach((_: string, lineIndex: number) => {
-                        const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
-                        if (checkedItems[itemKey]) {
-                          checkedLines++;
+                    // 確保 reminder.items 存在且是陣列
+                    if (reminder.items && Array.isArray(reminder.items)) {
+                      reminder.items.forEach((item: any, itemIndex: number) => {
+                        if (item && item.text) {
+                          const lines = item.text.split('\n').filter((line: string) => line.trim());
+                          totalLines += lines.length;
+                          
+                          lines.forEach((_: string, lineIndex: number) => {
+                            const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
+                            if (checkedItems[itemKey]) {
+                              checkedLines++;
+                            }
+                          });
                         }
                       });
-                    });
+                    }
                     
-                    const progressPercentage = totalLines > 0 ? (checkedLines / totalLines) * 100 : 0;
+                    const progressPercentage = totalLines > 0 ? Math.round((checkedLines / totalLines) * 100) : 0;
+                    
+                    // 調試信息
+                    console.log(`進度條調試 - ${reminder.title}:`, {
+                      totalLines,
+                      checkedLines,
+                      progressPercentage,
+                      checkedItems: Object.keys(checkedItems).filter(key => key.startsWith(reminder.id))
+                    });
                     
                     return (
                       <div className="mt-4 pt-4 border-t">
@@ -195,7 +227,10 @@ const TravelReminders = () => {
                         <div className="w-full bg-muted rounded-full h-2 mt-2">
                           <div 
                             className="bg-primary h-2 rounded-full transition-all duration-300" 
-                            style={{ width: `${progressPercentage}%` }}
+                            style={{ 
+                              width: `${Math.max(0, Math.min(100, progressPercentage))}%`,
+                              minWidth: progressPercentage > 0 ? '4px' : '0px'
+                            }}
                           ></div>
                         </div>
                       </div>
