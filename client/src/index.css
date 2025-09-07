@@ -3,6 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 全局平滑滾動 */
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   --background: hsl(48, 100%, 96.08%);
   --foreground: hsl(26, 83.33%, 14.12%);

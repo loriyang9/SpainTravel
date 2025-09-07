@@ -12,9 +12,26 @@ const TravelReminders = () => {
   const [selectedPriority, setSelectedPriority] = useState("全部");
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   
-  // 頁面載入時自動滾動到頂部
+  // 處理錨點跳轉
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const hash = window.location.hash;
+    if (hash) {
+      // 如果有錨點，等待頁面渲染完成後跳轉到指定位置
+      setTimeout(() => {
+        const element = document.getElementById(hash.substring(1));
+        if (element) {
+          // 考慮頂部導航欄高度，添加80px偏移
+          const offsetTop = element.offsetTop - 100;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    } else {
+      // 沒有錨點則滾動到頂部
+      window.scrollTo(0, 0);
+    }
   }, []);
   
   
