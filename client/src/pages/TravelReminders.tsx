@@ -19,10 +19,6 @@ const TravelReminders = () => {
     setCheckedItems({});
   }, []);
   
-  // 重置所有勾選狀態的函數
-  const resetAllChecked = () => {
-    setCheckedItems({});
-  };
   
   const { data: reminders, isLoading } = useQuery<TravelReminder[]>({
     queryKey: ['/api/reminders'],
@@ -92,16 +88,6 @@ const TravelReminders = () => {
           </Link>
           <h1 className="text-4xl font-bold text-foreground font-serif mb-4">旅遊提醒事項</h1>
           <p className="text-lg text-muted-foreground">重要注意事項與出發前檢查</p>
-          
-          {/* Reset button for testing */}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={resetAllChecked}
-            className="mt-4"
-          >
-            重置所有勾選
-          </Button>
         </div>
 
 
@@ -216,10 +202,11 @@ const TravelReminders = () => {
                         </div>
                         <div className="w-full bg-muted rounded-full h-2 mt-2">
                           <div 
-                            className="bg-primary h-2 rounded-full transition-all duration-300" 
+                            className={`h-2 rounded-full transition-all duration-300 ${
+                              progressPercentage > 0 ? 'bg-primary' : 'bg-transparent'
+                            }`}
                             style={{ 
-                              width: `${Math.max(0, Math.min(100, progressPercentage))}%`,
-                              minWidth: progressPercentage > 0 ? '4px' : '0px'
+                              width: `${Math.max(0, Math.min(100, progressPercentage))}%`
                             }}
                           ></div>
                         </div>
