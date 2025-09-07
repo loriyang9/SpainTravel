@@ -145,7 +145,7 @@ const TravelReminders = () => {
                 // 出發前準備：每個分段都有checkbox
                 <>
                   <ul className="space-y-3">
-                    {reminder.items.map((item: any, itemIndex: number) => {
+                    {(reminder.items as any[]).map((item: any, itemIndex: number) => {
                       // 將每一行分割成獨立的checklist項目
                       const lines = item.text.split('\n').filter((line: string) => line.trim());
                       
@@ -191,7 +191,7 @@ const TravelReminders = () => {
                     
                     // 確保 reminder.items 存在且是陣列
                     if (reminder.items && Array.isArray(reminder.items)) {
-                      reminder.items.forEach((item: any, itemIndex: number) => {
+                      (reminder.items as any[]).forEach((item: any, itemIndex: number) => {
                         if (item && item.text) {
                           const lines = item.text.split('\n').filter((line: string) => line.trim());
                           totalLines += lines.length;
