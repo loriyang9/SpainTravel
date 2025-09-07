@@ -93,7 +93,7 @@ const TravelReminders = () => {
         {travelReminders
           .filter(reminder => reminder.title === "出發前準備")
           .map((reminder: TravelReminder) => (
-            <div key={reminder.id} className="bg-card rounded-xl p-8 shadow-lg card-hover mb-12">
+            <div key={reminder.id} id={reminder.id} className="bg-card rounded-xl p-8 shadow-lg card-hover mb-12">
               {/* Icon and Title */}
               <div className="flex items-center mb-6">
                 <div className="text-3xl mr-4">✅</div>
@@ -196,7 +196,7 @@ const TravelReminders = () => {
           {travelReminders
             .filter(reminder => reminder.title !== "出發前準備")
             .map((reminder: TravelReminder) => (
-              <div key={reminder.id} className="bg-card rounded-xl p-6 shadow-lg card-hover">
+              <div key={reminder.id} id={reminder.id} className="bg-card rounded-xl p-6 shadow-lg card-hover">
                 {/* Icon and Title */}
                 <div className="flex items-center mb-4">
                   <div className="text-2xl mr-3">
