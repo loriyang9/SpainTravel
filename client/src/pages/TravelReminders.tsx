@@ -96,9 +96,9 @@ const TravelReminders = () => {
             <div key={reminder.id} className="bg-card rounded-xl p-8 shadow-lg card-hover mb-12">
               {/* Icon and Title */}
               <div className="flex items-center mb-6">
-                <div className="text-3xl mr-4">🧳</div>
+                <div className="text-3xl mr-4">✅</div>
                 <h3 className="text-2xl font-semibold text-card-foreground" data-testid={`reminder-title-${reminder.id}`}>
-                  {reminder.title}
+                  出發前準備確認表
                 </h3>
               </div>
 
@@ -254,7 +254,7 @@ const TravelReminders = () => {
           <div className="grid md:grid-cols-2 gap-4 text-sm text-yellow-700 dark:text-yellow-300">
             <div>
               <h4 className="font-medium mb-2">出發前7天</h4>
-              <p>確認「出發前準備」的項目都已完成，特別是證件和保險相關事項。</p>
+              <p>確認「出發前準備確認表」的項目都已完成，特別是證件和保險相關事項。</p>
             </div>
             <div>
               <h4 className="font-medium mb-2">出發前3天</h4>
