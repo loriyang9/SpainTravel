@@ -194,14 +194,6 @@ const TravelReminders = () => {
                     
                     const progressPercentage = totalLines > 0 ? Math.round((checkedLines / totalLines) * 100) : 0;
                     
-                    // 調試信息
-                    console.log(`🐛 Debug for reminder "${reminder.title}":`, {
-                      totalLines,
-                      checkedLines, 
-                      progressPercentage,
-                      checkedItemsForThisReminder: Object.keys(checkedItems).filter(key => key.startsWith(`${reminder.id}-`)),
-                      allCheckedItems: checkedItems
-                    });
                     
                     return (
                       <div className="mt-4 pt-4 border-t">
@@ -211,13 +203,11 @@ const TravelReminders = () => {
                         </div>
                         <div className="w-full bg-muted rounded-full h-2 mt-2">
                           <div 
-                            className={`h-2 rounded-full transition-all duration-300 ${
-                              progressPercentage > 0 ? 'bg-primary' : 'bg-transparent'
-                            }`}
+                            className="h-2 rounded-full transition-all duration-300"
                             style={{ 
-                              width: `${Math.max(0, Math.min(100, progressPercentage))}%`
+                              width: `${Math.max(0, Math.min(100, progressPercentage))}%`,
+                              backgroundColor: progressPercentage > 0 ? 'hsl(var(--primary))' : 'transparent'
                             }}
-                            data-debug={`width-${progressPercentage}%-class-${progressPercentage > 0 ? 'bg-primary' : 'bg-transparent'}`}
                           ></div>
                         </div>
                       </div>
