@@ -72,24 +72,30 @@ const ReminderCard = ({ id, title, items, icon, priority, isPreview = false }: R
       <div className="text-muted-foreground space-y-2 text-sm">
         {/* 預覽模式只顯示前兩行，詳細模式顯示全部 */}
         {items.map((item, index) => {
-          const lines = item.text.split('\n').filter(line => line.trim());
-          const displayLines = isPreview ? lines.slice(0, 2) : lines;
-          
-          return (
-            <div key={index} className="text-sm" data-testid={`reminder-item-${id}-${index}`}>
-              {displayLines.map((line, lineIndex) => (
-                <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
-                  {line}
-                </div>
-              ))}
-              {/* 在預覽模式下顯示省略號 */}
-              {isPreview && lines.length > 2 && (
-                <div className="mt-2 text-muted-foreground/60">
-                  ...
-                </div>
-              )}
-            </div>
-          );
+          if (isPreview) {
+            // 預覽模式：統一顯示前120個字符，保持一致性
+            const fullText = item.text.replace(/\n/g, ' ').trim();
+            const previewText = fullText.length > 120 ? fullText.substring(0, 120) : fullText;
+            const hasMore = fullText.length > 120;
+            
+            return (
+              <div key={index} className="text-sm" data-testid={`reminder-item-${id}-${index}`}>
+                <div>{previewText}{hasMore ? '...' : ''}</div>
+              </div>
+            );
+          } else {
+            // 詳細模式：顯示完整內容，保持原有格式
+            const lines = item.text.split('\n').filter(line => line.trim());
+            return (
+              <div key={index} className="text-sm" data-testid={`reminder-item-${id}-${index}`}>
+                {lines.map((line, lineIndex) => (
+                  <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
+                    {line}
+                  </div>
+                ))}
+              </div>
+            );
+          }
         })}
       </div>
       
