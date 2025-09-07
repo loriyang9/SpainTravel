@@ -90,131 +90,148 @@ const TravelReminders = () => {
 
 
 
-        {/* Reminders Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="reminders-grid">
-          {travelReminders.map((reminder: TravelReminder) => (
-            <div key={reminder.id} className="bg-card rounded-xl p-6 shadow-lg card-hover">
+        {/* 出發前準備 - 單獨在頂部 */}
+        {travelReminders
+          .filter(reminder => reminder.title === "出發前準備")
+          .map((reminder: TravelReminder) => (
+            <div key={reminder.id} className="bg-card rounded-xl p-8 shadow-lg card-hover mb-12">
               {/* Icon and Title */}
-              <div className="flex items-center mb-4">
-                <div className="text-2xl mr-3">
-                  {(() => {
-                    // 根據標題直接映射圖標
-                    switch (reminder.title) {
-                      case "出發前準備":
-                        return "🧳";
-                      case "防盜安全":
-                        return "🛡️";
-                      case "天氣與穿著":
-                        return "🌤️";
-                      case "關於時間":
-                        return "⏰";
-                      case "食物與水":
-                        return "🍽️";
-                      case "小費":
-                        return "💰";
-                      case "廁所":
-                        return "🚻";
-                      default:
-                        return "📋"; // 預設圖標
-                    }
-                  })()}
-                </div>
-                <h3 className="text-xl font-semibold text-card-foreground" data-testid={`reminder-title-${reminder.id}`}>
+              <div className="flex items-center mb-6">
+                <div className="text-3xl mr-4">🧳</div>
+                <h3 className="text-2xl font-semibold text-card-foreground" data-testid={`reminder-title-${reminder.id}`}>
                   {reminder.title}
                 </h3>
               </div>
 
-              {/* Content */}
-              {reminder.title === "出發前準備" ? (
-                // 出發前準備：每個分段都有checkbox
-                <>
-                  <ul className="space-y-3">
-                    {(reminder.items as any[]).map((item: any, itemIndex: number) => {
-                      // 將每一行分割成獨立的checklist項目
-                      const lines = item.text.split('\n').filter((line: string) => line.trim());
-                      
-                      return lines.map((line: string, lineIndex: number) => {
-                        const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
-                        const isChecked = checkedItems[itemKey] || false;
-                        
-                        return (
-                          <li key={`${itemIndex}-${lineIndex}`} className="flex items-start space-x-3" data-testid={`reminder-item-${reminder.id}-${itemIndex}-${lineIndex}`}>
-                            <Checkbox
-                              checked={isChecked}
-                              onCheckedChange={() => {
-                                const newCheckedItems = { ...checkedItems };
-                                if (isChecked) {
-                                  delete newCheckedItems[itemKey];
-                                } else {
-                                  newCheckedItems[itemKey] = true;
-                                }
-                                setCheckedItems(newCheckedItems);
-                              }}
-                              className="mt-0.5"
-                              data-testid={`checkbox-${reminder.id}-${itemIndex}-${lineIndex}`}
-                            />
-                            <div 
-                              className={`text-sm ${isChecked 
-                                ? 'line-through text-muted-foreground' 
-                                : 'text-foreground'
-                              }`}
-                            >
-                              {line}
-                            </div>
-                          </li>
-                        );
-                      });
-                    }).flat()}
-                  </ul>
-
-                  {/* Progress for this card */}
-                  {(() => {
-                    // 計算所有分段的總數和已完成數
-                    let totalLines = 0;
-                    let checkedLines = 0;
+              {/* Content - 出發前準備：每個分段都有checkbox */}
+              <ul className="space-y-4 mb-6">
+                {(reminder.items as any[]).map((item: any, itemIndex: number) => {
+                  // 將每一行分割成獨立的checklist項目
+                  const lines = item.text.split('\n').filter((line: string) => line.trim());
+                  
+                  return lines.map((line: string, lineIndex: number) => {
+                    const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
+                    const isChecked = checkedItems[itemKey] || false;
                     
-                    // 確保 reminder.items 存在且是陣列
-                    if (reminder.items && Array.isArray(reminder.items)) {
-                      (reminder.items as any[]).forEach((item: any, itemIndex: number) => {
-                        if (item && item.text) {
-                          const lines = item.text.split('\n').filter((line: string) => line.trim());
-                          totalLines += lines.length;
-                          
-                          lines.forEach((_: string, lineIndex: number) => {
-                            const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
-                            if (checkedItems[itemKey]) {
-                              checkedLines++;
+                    return (
+                      <li key={`${itemIndex}-${lineIndex}`} className="flex items-start space-x-4" data-testid={`reminder-item-${reminder.id}-${itemIndex}-${lineIndex}`}>
+                        <Checkbox
+                          checked={isChecked}
+                          onCheckedChange={() => {
+                            const newCheckedItems = { ...checkedItems };
+                            if (isChecked) {
+                              delete newCheckedItems[itemKey];
+                            } else {
+                              newCheckedItems[itemKey] = true;
                             }
-                          });
+                            setCheckedItems(newCheckedItems);
+                          }}
+                          className="mt-1"
+                          data-testid={`checkbox-${reminder.id}-${itemIndex}-${lineIndex}`}
+                        />
+                        <div 
+                          className={`text-base ${isChecked 
+                            ? 'line-through text-muted-foreground' 
+                            : 'text-foreground'
+                          }`}
+                        >
+                          {line}
+                        </div>
+                      </li>
+                    );
+                  });
+                }).flat()}
+              </ul>
+
+              {/* Progress for this card */}
+              {(() => {
+                // 計算所有分段的總數和已完成數
+                let totalLines = 0;
+                let checkedLines = 0;
+                
+                // 確保 reminder.items 存在且是陣列
+                if (reminder.items && Array.isArray(reminder.items)) {
+                  (reminder.items as any[]).forEach((item: any, itemIndex: number) => {
+                    if (item && item.text) {
+                      const lines = item.text.split('\n').filter((line: string) => line.trim());
+                      totalLines += lines.length;
+                      
+                      lines.forEach((_: string, lineIndex: number) => {
+                        const itemKey = `${reminder.id}-${itemIndex}-${lineIndex}`;
+                        if (checkedItems[itemKey]) {
+                          checkedLines++;
                         }
                       });
                     }
-                    
-                    const progressPercentage = totalLines > 0 ? Math.round((checkedLines / totalLines) * 100) : 0;
-                    
-                    
-                    return (
-                      <div className="mt-4 pt-4 border-t">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">進度</span>
-                          <span className="font-medium">{checkedLines} / {totalLines}</span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 mt-2">
-                          {progressPercentage > 0 && (
-                            <div 
-                              className="h-2 rounded-full transition-all duration-300 bg-primary"
-                              style={{ 
-                                width: `${Math.max(0, Math.min(100, progressPercentage))}%`
-                              }}
-                            ></div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </>
-              ) : (
-                // 其他分類：只顯示內容
+                  });
+                }
+                
+                const progressPercentage = totalLines > 0 ? Math.round((checkedLines / totalLines) * 100) : 0;
+                
+                return (
+                  <div className="pt-6 border-t">
+                    <div className="flex items-center justify-between text-base mb-3">
+                      <span className="text-muted-foreground font-medium">完成進度</span>
+                      <span className="font-semibold text-lg">{checkedLines} / {totalLines}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3">
+                      {progressPercentage > 0 && (
+                        <div 
+                          className="h-3 rounded-full transition-all duration-500 bg-primary"
+                          style={{ 
+                            width: `${Math.max(0, Math.min(100, progressPercentage))}%`
+                          }}
+                        ></div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          ))
+        }
+
+        {/* 其他提醒事項標題 */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold text-foreground font-serif mb-2">旅遊提醒與注意事項</h2>
+          <p className="text-muted-foreground">重要資訊與實用建議</p>
+        </div>
+
+        {/* 其他提醒事項 Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="reminders-grid">
+          {travelReminders
+            .filter(reminder => reminder.title !== "出發前準備")
+            .map((reminder: TravelReminder) => (
+              <div key={reminder.id} className="bg-card rounded-xl p-6 shadow-lg card-hover">
+                {/* Icon and Title */}
+                <div className="flex items-center mb-4">
+                  <div className="text-2xl mr-3">
+                    {(() => {
+                      // 根據標題直接映射圖標
+                      switch (reminder.title) {
+                        case "防盜安全":
+                          return "🛡️";
+                        case "天氣與穿著":
+                          return "🌤️";
+                        case "關於時間":
+                          return "⏰";
+                        case "食物與水":
+                          return "🍽️";
+                        case "小費":
+                          return "💰";
+                        case "廁所":
+                          return "🚻";
+                        default:
+                          return "📋"; // 預設圖標
+                      }
+                    })()}
+                  </div>
+                  <h3 className="text-xl font-semibold text-card-foreground" data-testid={`reminder-title-${reminder.id}`}>
+                    {reminder.title}
+                  </h3>
+                </div>
+
+                {/* Content - 其他分類：只顯示內容 */}
                 <div className="space-y-3">
                   {(reminder.items as any[]).map((item: any, index: number) => (
                     <div key={index} className="text-sm text-foreground" data-testid={`reminder-item-${reminder.id}-${index}`}>
@@ -226,9 +243,8 @@ const TravelReminders = () => {
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            ))}
         </div>
 
         {/* Important Notes */}
