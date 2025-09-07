@@ -194,6 +194,15 @@ const TravelReminders = () => {
                     
                     const progressPercentage = totalLines > 0 ? Math.round((checkedLines / totalLines) * 100) : 0;
                     
+                    // 調試信息
+                    console.log(`🐛 Debug for reminder "${reminder.title}":`, {
+                      totalLines,
+                      checkedLines, 
+                      progressPercentage,
+                      checkedItemsForThisReminder: Object.keys(checkedItems).filter(key => key.startsWith(`${reminder.id}-`)),
+                      allCheckedItems: checkedItems
+                    });
+                    
                     return (
                       <div className="mt-4 pt-4 border-t">
                         <div className="flex items-center justify-between text-sm">
@@ -208,6 +217,7 @@ const TravelReminders = () => {
                             style={{ 
                               width: `${Math.max(0, Math.min(100, progressPercentage))}%`
                             }}
+                            data-debug={`width-${progressPercentage}%-class-${progressPercentage > 0 ? 'bg-primary' : 'bg-transparent'}`}
                           ></div>
                         </div>
                       </div>
