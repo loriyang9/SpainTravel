@@ -125,8 +125,8 @@ const DailyItinerary = () => {
                     <CardTitle className="text-2xl font-serif mb-2">
                       Day {currentItinerary.dayNumber} - {currentItinerary.title}
                     </CardTitle>
-                    <div className="flex items-center space-x-4 text-muted-foreground">
-                      <span className="flex items-center">
+                    <div className="text-muted-foreground space-y-1">
+                      <div className="flex items-center">
                         <Calendar className="w-4 h-4 mr-1" />
                         {(() => {
                           // 將日期從 "2025/10/4 週六" 轉換為 "10/4 (六)"
@@ -138,11 +138,11 @@ const DailyItinerary = () => {
                           }
                           return dateStr; // 如果格式不匹配，返回原始格式
                         })()}
-                      </span>
-                      <span className="flex items-center">
+                      </div>
+                      <div className="flex items-center">
                         <MapPin className="w-4 h-4 mr-1" />
                         {currentItinerary.city}
-                      </span>
+                      </div>
                     </div>
                   </div>
                   <Badge variant="outline" className="text-lg px-4 py-2">
