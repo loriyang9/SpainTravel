@@ -133,7 +133,7 @@ const TodayHighlights = () => {
             今日行程重點
           </h2>
           <p className="text-lg text-muted-foreground">
-            Day {currentDay} {todayItinerary?.date || ''} 重要安排一目了然
+            <span className="font-bold">Day {currentDay} {todayItinerary?.date || ''}</span> 重要安排一目了然
           </p>
         </div>
         
