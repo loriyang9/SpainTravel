@@ -225,8 +225,9 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
 
           // 添加點擊監聽器顯示資訊窗口
           marker.addListener('click', () => {
-            // 建立 Google Maps 連結
-            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${attraction.lat},${attraction.lng}`;
+            // 建立 Google Maps 連結 - 搜尋景點名稱和城市
+            const queryString = `${attraction.name},${attraction.city}`;
+            const googleMapsUrl = `https://maps.google.com/maps?q=${encodeURIComponent(queryString)}`;
             
             infoWindow.setContent(`
               <div style="max-width: 300px; padding: 12px; font-family: system-ui, -apple-system, sans-serif;">
