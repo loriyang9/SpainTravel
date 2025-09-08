@@ -350,7 +350,7 @@ const Home = () => {
       <footer className="bg-secondary text-secondary-foreground py-12 px-6" data-testid="footer">
         <div className="max-w-7xl mx-auto">
           <div className="text-center text-sm opacity-60">
-            <p>&copy; 2025 西班牙金秋之旅 | Golden Moment, Autumn Journey | 用心規劃每一個美好時刻</p>
+            <p>&copy; 2025 西班牙金秋之旅 | Golden Moment, Autumn Journey</p>
           </div>
         </div>
       </footer>
