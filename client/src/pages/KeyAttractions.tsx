@@ -63,6 +63,21 @@ const KeyAttractions = () => {
           <p className="text-lg text-muted-foreground">你可能會想知道的景點介紹</p>
         </div>
 
+        {/* Google Maps */}
+        <div className="mb-8 w-full" data-testid="attractions-map">
+          <iframe 
+            src="https://www.google.com/maps/d/u/0/embed?mid=1pxHvN6b8YAmYN_1SdTzF7uEQr-y5VRo&ehbc=2E312F&noprof=1" 
+            width="100%" 
+            height="500"
+            style={{ border: 0, borderRadius: '8px' }}
+            allowFullScreen={true}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="shadow-lg"
+            title="西班牙景點分布地圖"
+          />
+        </div>
+
         {/* Filters */}
         <div className="mb-8 p-6 bg-card rounded-lg shadow-lg">
           <div className="grid md:grid-cols-3 gap-4">
