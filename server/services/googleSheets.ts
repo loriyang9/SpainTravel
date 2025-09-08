@@ -9,6 +9,7 @@ class GoogleSheetsService {
   private sheets: any;
   private openai: OpenAI | null;
   private descriptionsCache: Map<string, { description: string; timestamp: number }>;
+  private attractionDescriptionsCache: Map<string, { description: string; timestamp: number }>;
 
   constructor() {
     try {
@@ -28,6 +29,7 @@ class GoogleSheetsService {
       
       // In-memory cache for descriptions
       this.descriptionsCache = new Map();
+      this.attractionDescriptionsCache = new Map();
       
     } catch (error) {
       console.error('Failed to initialize Google Sheets service:', error);
@@ -339,6 +341,76 @@ class GoogleSheetsService {
     console.log(`🎯 Final description result: "${result}"`);
     return result;
   }
+
+  // AI-powered attraction description generation
+  private async generateAttractionAIDescription(name: string, city: string, category: string): Promise<string> {
+    // Create cache key
+    const cacheKey = `${name}-${city}-${category}`;
+    
+    // Check cache first
+    const cached = this.attractionDescriptionsCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < 7 * 24 * 60 * 60 * 1000) { // 7 days cache
+      return cached.description;
+    }
+
+    console.log(`🎨 Generating AI description for attraction: ${name} in ${city}`);
+
+    const prompt = `為西班牙旅遊景點"${name}"生成一個吸引人的30字中文描述。
+
+景點資訊：
+- 名稱：${name}
+- 城市：${city}
+- 分類：${category}
+
+要求：
+1. 恰好30個中文字符
+2. 突出該景點的特色和魅力
+3. 語言生動、富有感染力
+4. 讓讀者想要前往參觀
+5. 融入西班牙文化特色
+6. 不要使用省略號
+
+範例風格：「歷史悠久的古堡見證著西班牙的輝煌歲月，石牆間訴說著騎士與公主的浪漫傳說」`;
+
+    try {
+      const response = await this.openai!.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "你是一個專業的旅遊文案寫手，擅長用30字中文精準描述景點特色，讓讀者充滿探索欲望。"
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 100,
+        temperature: 0.8
+      });
+
+      console.log(`📨 OpenAI API response for ${name}:`, {
+        choices: response.choices.length,
+        firstChoice: response.choices[0]?.message?.content?.substring(0, 100) + '...',
+        usage: response.usage
+      });
+
+      const result = response.choices[0]?.message?.content?.trim() || `探索${name}的獨特魅力，感受${city}的文化底蘊與歷史風情`;
+      
+      // Cache the result
+      this.attractionDescriptionsCache.set(cacheKey, {
+        description: result,
+        timestamp: Date.now()
+      });
+
+      console.log(`✨ Generated attraction description for ${name}: "${result}"`);
+      return result;
+    } catch (error) {
+      console.error(`❌ Failed to generate AI description for ${name}:`, error);
+      // Fallback description
+      return `探索${name}的獨特魅力，感受${city}的文化底蘊與歷史風情`;
+    }
+  }
   
   // Template-based fallback generation (no length limit)
   private generateTemplateDescription(dayNumber: number, theme: string, city: string, activities: any[]): string {
@@ -512,18 +584,34 @@ class GoogleSheetsService {
         const rowData = data[row];
         if (!rowData || rowData.length === 0) continue;
 
+        let description = rowData[5] || ''; // 重點特色
+        
+        // Generate AI description if missing and OpenAI is available
+        if (!description && rowData[1] && this.openai) {
+          try {
+            description = await this.generateAttractionAIDescription(
+              rowData[1], // name
+              rowData[3] || '西班牙', // city
+              rowData[4] || '景點' // category
+            );
+            console.log(`✅ Generated AI description for ${rowData[1]}: "${description}"`);
+          } catch (error) {
+            console.warn(`❌ Failed to generate AI description for ${rowData[1]}:`, error instanceof Error ? error.message : 'Unknown error');
+          }
+        }
+
         const attraction: any = {
           id: rowData[0] || '',
           name: rowData[1] || '',
           nameEn: rowData[2] || '',
           city: rowData[3] || '',
           category: rowData[4] || '其他',
-          description: rowData[5] || '', // 重點特色
+          description: description,
           additionalInfo: rowData[6] || '', // 其他補充
           visitDuration: null,
           ticketRequired: null,
           imageUrl: this.getAttractionImageUrl(rowData[1] || ''),
-          highlights: this.parseHighlights(rowData[5] || '') // 重點特色
+          highlights: this.parseHighlights(description) // Use AI-generated or original description
         };
 
         if (attraction.name) {
