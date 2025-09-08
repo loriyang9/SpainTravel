@@ -88,13 +88,13 @@ const AttractionCard = ({
           {description}
         </p>
         
-        <div className="flex items-center justify-between text-sm text-muted-foreground gap-3">
-          <span className="flex items-center flex-shrink-0 whitespace-nowrap" data-testid={`city-${id}`}>
+        <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+          <span className="flex items-center whitespace-nowrap" data-testid={`city-${id}`}>
             <MapPin className="w-4 h-4 mr-1" />
             {city}
           </span>
           {additionalInfo && (
-            <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs font-medium truncate max-w-[60%]" data-testid={`additional-info-${id}`}>
+            <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs font-medium leading-relaxed" data-testid={`additional-info-${id}`}>
               {additionalInfo}
             </span>
           )}
