@@ -37,7 +37,7 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
   });
 
   // Fetch itinerary data for smart centering
-  const { data: itineraryData = [] } = useQuery({
+  const { data: itineraryData = [] } = useQuery<any[]>({
     queryKey: ['/api/itinerary'],
   });
 
@@ -79,7 +79,7 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
 
   // Get city for specific day from itinerary
   const getCityForDay = (dayNumber: number): string => {
-    if (!itineraryData || itineraryData.length === 0) {
+    if (!Array.isArray(itineraryData) || itineraryData.length === 0) {
       return 'Barcelona'; // Default fallback
     }
     
@@ -156,7 +156,7 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
         };
       }
     } catch (error) {
-      console.log('無法獲取用戶位置，使用行程邏輯:', error.message);
+      console.log('無法獲取用戶位置，使用行程邏輯:', error instanceof Error ? error.message : '位置服務不可用');
     }
     
     // User not in Spain or location unavailable, use itinerary logic
@@ -182,7 +182,7 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
 
   // Initialize smart map center
   useEffect(() => {
-    if (itineraryData.length > 0) {
+    if (Array.isArray(itineraryData) && itineraryData.length > 0) {
       calculateMapCenter().then(center => {
         setMapCenter(center);
         console.log(`地圖中心設定為: ${center.source === 'user' ? '用戶位置' : center.source === 'itinerary' ? '行程城市' : '預設(巴塞隆納)'}`, center);
