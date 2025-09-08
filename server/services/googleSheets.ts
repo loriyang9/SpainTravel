@@ -502,18 +502,18 @@ class GoogleSheetsService {
       1: '/attached_assets/IMG_5929_1757347793923.jpeg', // 用戶自定義 Day 1 照片 - 調時差日
       2: '/attached_assets/IMG_5930_1757348448793.jpeg', // 用戶自定義 Day 2 照片 - 高第經典行程 Part I
       3: '/attached_assets/IMG_5931_1757348448793.jpeg', // 用戶自定義 Day 3 照片 - 高第經典行程 Part II
-      4: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona beach and Mediterranean - relaxation day
-      5: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona Gothic quarter - free exploration
-      6: 'https://images.unsplash.com/photo-1554386690-91273de46bf6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Spanish train or travel - journey to Salamanca
-      7: 'https://images.unsplash.com/photo-1573436558089-5d8e2e7eed8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Salamanca cathedral wedding architecture - wedding day
-      8: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Salamanca golden stone buildings - post-wedding rest
-      9: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Salamanca university architecture - exploration
-      10: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Travel journey - to Madrid
-      11: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Toledo ancient city - day trip
-      12: 'https://images.unsplash.com/photo-1539821266776-0e846c90c957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Madrid Royal Palace - Madrid sightseeing
-      13: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Shopping street Madrid - shopping day
-      14: 'https://images.unsplash.com/photo-1539821266776-0e846c90c957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Madrid city evening - final exploration
-      15: 'https://images.unsplash.com/photo-1590735213920-68192a487bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Airport departure - return home
+      4: '/attached_assets/IMG_5932_1757348598945.jpeg', // 用戶自定義 Day 4 照片 - 蒙塞拉特山一日行程
+      5: '/attached_assets/IMG_5933_1757348598945.jpeg', // 用戶自定義 Day 5 照片 - 自由探索
+      6: '/attached_assets/IMG_5934_1757348598945.jpeg', // 用戶自定義 Day 6 照片 - 前往薩拉曼卡
+      7: '/attached_assets/IMG_5935_1757348598945.jpeg', // 用戶自定義 Day 7 照片 - 婚禮
+      8: '/attached_assets/IMG_5936_1757348598945.jpeg', // 用戶自定義 Day 8 照片 - 婚禮後休息
+      9: '/attached_assets/IMG_5937_1757348598945.jpeg', // 用戶自定義 Day 9 照片 - 薩拉曼卡漫遊
+      10: '/attached_assets/IMG_5938_1757348598945.jpeg', // 用戶自定義 Day 10 照片 - 前往馬德里
+      11: '/attached_assets/IMG_5939_1757348598945.jpeg', // 用戶自定義 Day 11 照片 - Toledo一日遊
+      12: '/attached_assets/IMG_5940_1757348598945.jpeg', // 用戶自定義 Day 12 照片 - 馬德里一日遊
+      13: '/attached_assets/IMG_5941_1757348598945.jpeg', // 用戶自定義 Day 13 照片 - Shopping日
+      14: '/attached_assets/IMG_5942_1757348598945.jpeg', // 用戶自定義 Day 14 照片 - 最後探索
+      15: '/attached_assets/IMG_5943_1757348598945.jpeg', // 用戶自定義 Day 15 照片 - 回家
     };
 
     // Return theme-specific image if available
