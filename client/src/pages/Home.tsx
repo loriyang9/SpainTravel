@@ -349,17 +349,7 @@ const Home = () => {
       {/* Footer */}
       <footer className="bg-secondary text-secondary-foreground py-12 px-6" data-testid="footer">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div>
-              <h4 className="font-semibold mb-4">重要日期</h4>
-              <ul className="space-y-2 text-sm opacity-80">
-                <li className="flex items-center"><span>✈️ 出發：2025/10/05</span></li>
-                <li className="flex items-center"><span>🏠 返回：2025/10/18</span></li>
-                <li className="flex items-center"><span>📅 天數：{actualTripDays}天{actualTripDays - 2}夜</span></li>
-                <li className="flex items-center"><span>🏙️ 城市：6個主要城市</span></li>
-              </ul>
-            </div>
-            
+          <div className="max-w-md mx-auto mb-8">
             <div>
               <h4 className="font-semibold mb-4">緊急聯絡</h4>
               <ul className="space-y-2 text-sm opacity-80">
