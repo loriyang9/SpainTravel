@@ -181,7 +181,22 @@ const DailyItinerary = () => {
                         data-testid={`activity-${index}`}
                       >
                         <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold min-w-fit">
-                          {activity.time}
+                          {(() => {
+                            // 將12小時制轉換為24小時制，統一格式
+                            const timeStr = activity.time;
+                            const match = timeStr.match(/(上午|下午)\s*(\d{1,2}):(\d{2})/);
+                            if (match) {
+                              const [, period, hour, minute] = match;
+                              let hour24 = parseInt(hour);
+                              if (period === '下午' && hour24 !== 12) {
+                                hour24 += 12;
+                              } else if (period === '上午' && hour24 === 12) {
+                                hour24 = 0;
+                              }
+                              return `${hour24.toString().padStart(2, '0')}:${minute}`;
+                            }
+                            return timeStr; // 如果格式不匹配，返回原始格式
+                          })()}
                         </div>
                         <div className="flex-1">
                           <h4 className="font-semibold text-lg mb-1">{activity.name}</h4>
