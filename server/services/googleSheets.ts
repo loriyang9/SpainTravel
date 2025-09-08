@@ -500,8 +500,8 @@ class GoogleSheetsService {
     const dayThemeMap: { [key: number]: string } = {
       0: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Airplane wing at sunset - departure
       1: '/attached_assets/IMG_5929_1757347793923.jpeg', // 用戶自定義 Day 1 照片 - 調時差日
-      2: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Sagrada Familia golden hour - Gaudi architecture Part I
-      3: 'https://images.unsplash.com/photo-1558642084-fd07fae5282e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Park Guell colorful mosaics - Gaudi architecture Part II
+      2: '/attached_assets/IMG_5930_1757348448793.jpeg', // 用戶自定義 Day 2 照片 - 高第經典行程 Part I
+      3: '/attached_assets/IMG_5931_1757348448793.jpeg', // 用戶自定義 Day 3 照片 - 高第經典行程 Part II
       4: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona beach and Mediterranean - relaxation day
       5: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona Gothic quarter - free exploration
       6: 'https://images.unsplash.com/photo-1554386690-91273de46bf6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Spanish train or travel - journey to Salamanca
