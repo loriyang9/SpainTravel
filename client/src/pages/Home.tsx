@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { ItineraryDay, Attraction, TravelReminder } from "@shared/schema";
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCallback, useEffect, useMemo } from 'react';
+import barcelonaHeroImage from "@assets/barcelona-card-homepage-1746806969_1757344902015.jpg";
 
 const Home = () => {
   const departureDate = new Date('2025-10-05T00:30:00+08:00'); // Taiwan time
@@ -161,8 +162,8 @@ const Home = () => {
       >
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://pixabay.com/get/g82eec300f6e5900dfb8ea45e94f67902d19288e0a395e2cff931d3fc0521a39fcee9918b13bd306111b1f40505416f6148fdf12123c1e0eae8141ff934d27cd1_1280.jpg"
-            alt="Golden hour view of Sevilla's historic architecture" 
+            src={barcelonaHeroImage}
+            alt="Golden hour aerial view of Barcelona with Sagrada Familia" 
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 hero-gradient"></div>
