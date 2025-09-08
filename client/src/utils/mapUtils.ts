@@ -16,9 +16,26 @@ export function createGoogleMapsUrl(locationName: string): string {
     return '';
   }
 
-  // 檢查是否有特定地址對應
-  const specificAddress = LOCATION_ADDRESS_MAP[locationName.trim()];
-  const searchQuery = specificAddress || locationName.trim();
+  const trimmedLocation = locationName.trim();
+  
+  // 首先檢查完全匹配
+  let searchQuery = LOCATION_ADDRESS_MAP[trimmedLocation];
+  
+  // 如果沒有完全匹配，檢查是否包含關鍵字
+  if (!searchQuery) {
+    const lowerLocation = trimmedLocation.toLowerCase();
+    for (const [key, address] of Object.entries(LOCATION_ADDRESS_MAP)) {
+      if (lowerLocation.includes(key.toLowerCase()) || key.toLowerCase().includes(lowerLocation)) {
+        searchQuery = address;
+        break;
+      }
+    }
+  }
+  
+  // 如果仍然沒有找到對應，使用原始地點名稱
+  if (!searchQuery) {
+    searchQuery = trimmedLocation;
+  }
 
   // 創建 Google Maps 搜尋 URL
   const encodedQuery = encodeURIComponent(searchQuery);
