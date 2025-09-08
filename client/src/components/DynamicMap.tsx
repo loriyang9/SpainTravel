@@ -515,21 +515,6 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
     );
   }
 
-  // Get center description for user feedback
-  const getCenterDescription = (center: MapCenter): string => {
-    switch (center.source) {
-      case 'user':
-        return '📍 以您的位置為中心';
-      case 'itinerary':
-        const currentDay = getCurrentTripDay();
-        const cityName = getCityForDay(currentDay);
-        return `🗺️ 以當天城市 (${cityName}) 為中心`;
-      case 'default':
-        return '🌍 以巴塞隆納 (預設) 為中心';
-      default:
-        return '🗺️ 地圖載入中...';
-    }
-  };
 
   if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
     return (
@@ -548,16 +533,9 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
 
   return (
     <div className={`rounded-lg overflow-hidden shadow-lg ${className}`} data-testid="dynamic-map">
-      {/* Map center indicator */}
-      <div className="bg-muted/5 px-4 py-2 border-b border-muted/20">
-        <div className="text-xs text-muted-foreground">
-          {getCenterDescription(mapCenter)}
-        </div>
-      </div>
-      
       <div 
         ref={mapRef} 
-        style={{ height: height - 40, width: '100%' }} // Reduce height to account for indicator
+        style={{ height, width: '100%' }}
         className="bg-muted/20"
         data-testid="map-container"
       />
