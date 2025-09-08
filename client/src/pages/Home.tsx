@@ -349,17 +349,7 @@ const Home = () => {
       {/* Footer */}
       <footer className="bg-secondary text-secondary-foreground py-12 px-6" data-testid="footer">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h4 className="font-semibold mb-4">快速連結</h4>
-              <ul className="space-y-2 text-sm opacity-80">
-                <li><Link href="/"><span className="hover:text-primary transition-colors cursor-pointer">首頁</span></Link></li>
-                <li><Link href="/itinerary"><span className="hover:text-primary transition-colors cursor-pointer">每日行程</span></Link></li>
-                <li><Link href="/attractions"><span className="hover:text-primary transition-colors cursor-pointer">重要景點</span></Link></li>
-                <li><Link href="/reminders"><span className="hover:text-primary transition-colors cursor-pointer">旅遊提醒</span></Link></li>
-              </ul>
-            </div>
-            
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
             <div>
               <h4 className="font-semibold mb-4">重要日期</h4>
               <ul className="space-y-2 text-sm opacity-80">
