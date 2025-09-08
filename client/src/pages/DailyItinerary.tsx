@@ -120,7 +120,7 @@ const DailyItinerary = () => {
           <div className="lg:col-span-3">
             <Card data-testid="detailed-itinerary">
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex items-start justify-between">
                   <div>
                     <CardTitle className="text-2xl font-serif mb-2">
                       Day {currentItinerary.dayNumber} - {currentItinerary.title}
