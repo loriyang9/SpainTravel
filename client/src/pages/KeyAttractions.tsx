@@ -66,7 +66,6 @@ const KeyAttractions = () => {
 
         {/* 動態景點地圖 */}
         <div className="mb-8 w-full" data-testid="attractions-map">
-          <h2 className="text-2xl font-bold mb-4 text-foreground font-serif">景點分布地圖</h2>
           <p className="text-sm text-muted-foreground mb-4">點擊地圖上的圖標查看景點詳細資訊</p>
           <DynamicMap height={500} className="" />
         </div>
