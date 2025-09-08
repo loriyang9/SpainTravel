@@ -47,6 +47,42 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
     return iconMap[category] || iconMap["default"];
   };
 
+  // Category color mapping - same as AttractionCard
+  const getCategoryColor = (category: string): string => {
+    switch (category) {
+      case "景點":
+        return "#3b82f6"; // bg-blue-500
+      case "市場":
+        return "#22c55e"; // bg-green-500
+      case "步道":
+        return "#10b981"; // bg-emerald-500
+      case "購物中心":
+        return "#a855f7"; // bg-purple-500
+      case "餐廳與小酒館":
+        return "#ef4444"; // bg-red-500
+      case "早餐／早午餐":
+        return "#f97316"; // bg-orange-500
+      case "精品咖啡／咖啡館":
+        return "#d97706"; // bg-amber-600
+      case "小店":
+        return "#ec4899"; // bg-pink-500
+      case "教堂":
+        return "#6366f1"; // bg-indigo-500
+      case "博物館":
+        return "#14b8a6"; // bg-teal-500
+      case "宮殿":
+        return "#ca8a04"; // bg-yellow-600
+      case "公園":
+        return "#84cc16"; // bg-lime-500
+      case "古蹟":
+        return "#78716c"; // bg-stone-500
+      case "建築":
+        return "#4b5563"; // bg-gray-600
+      default:
+        return "#64748b"; // bg-slate-500
+    }
+  };
+
   // Load Google Maps Script
   useEffect(() => {
     const loadGoogleMaps = () => {
@@ -228,6 +264,7 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
             // 建立 Google Maps 連結 - 搜尋景點名稱和城市
             const queryString = `${attraction.name},${attraction.city}`;
             const googleMapsUrl = `https://maps.google.com/maps?q=${encodeURIComponent(queryString)}`;
+            const categoryColor = getCategoryColor(attraction.category);
             
             infoWindow.setContent(`
               <div style="max-width: 300px; padding: 12px; font-family: system-ui, -apple-system, sans-serif;">
@@ -235,7 +272,7 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
                   ${attraction.name}
                 </h3>
                 ${attraction.nameEn ? `<p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px; font-style: italic;">${attraction.nameEn}</p>` : ''}
-                <div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 6px 12px; border-radius: 16px; display: inline-flex; align-items: center; font-size: 13px; margin-bottom: 12px; gap: 6px;">
+                <div style="background: ${categoryColor}; color: white; padding: 6px 12px; border-radius: 4px; display: inline-flex; align-items: center; font-size: 13px; margin-bottom: 12px; gap: 6px; font-weight: 500;">
                   <span>${icon}</span>
                   <span>${attraction.category}</span>
                 </div>
