@@ -91,16 +91,19 @@ const DailyItinerary = () => {
                       >
                         <div className="font-semibold">Day {day.dayNumber} - {day.title}</div>
                         <div className="text-sm opacity-80 mt-1">
-                          {day.city}｜{(() => {
-                            // 將日期從 "2025年10月4日 星期六" 轉換為 "2025/10/4 (六)"
+                          {(() => {
+                            // 將日期從 "2025年10月4日 星期六" 轉換為 "10/4 (六)"
                             const dateStr = day.date;
                             const match = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日 星期(.)/);
                             if (match) {
                               const [, year, month, date, weekday] = match;
-                              return `${year}/${month}/${date} (${weekday})`;
+                              return `${month}/${date} (${weekday})`;
                             }
                             return dateStr; // 如果格式不匹配，返回原始格式
                           })()}
+                        </div>
+                        <div className="text-sm opacity-80">
+                          {day.city}
                         </div>
                       </button>
                     ))}
