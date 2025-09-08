@@ -173,7 +173,7 @@ class GoogleSheetsService {
           activities: activities.map(act => ({
             time: act.time || '全天',
             name: act.title || '活動',
-            description: act.description || act.title || '',
+            description: act.description || '',
             location: act.location || '',
             duration: act.duration || '1小時',
           })),
