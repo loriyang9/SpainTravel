@@ -75,12 +75,6 @@ const AttractionCard = ({
       className="block bg-background rounded-xl overflow-hidden shadow-xl card-hover transition-transform hover:scale-[1.02] cursor-pointer" 
       data-testid={`attraction-card-${id}`}
     >
-      <img 
-        src={imageUrl} 
-        alt={name}
-        className="w-full h-64 object-cover"
-        loading="lazy"
-      />
       <div className="p-8">
         <div className="flex items-center mb-4">
           <Badge 
