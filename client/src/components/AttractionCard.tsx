@@ -61,8 +61,20 @@ const AttractionCard = ({
     return category || "其他";
   };
 
+  // 生成 Google Maps 連結
+  const generateGoogleMapsUrl = () => {
+    const queryString = `${name},${city}`;
+    return `https://maps.google.com/maps?q=${encodeURIComponent(queryString)}`;
+  };
+
   return (
-    <div className="bg-background rounded-xl overflow-hidden shadow-xl card-hover" data-testid={`attraction-card-${id}`}>
+    <a 
+      href={generateGoogleMapsUrl()}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block bg-background rounded-xl overflow-hidden shadow-xl card-hover transition-transform hover:scale-[1.02] cursor-pointer" 
+      data-testid={`attraction-card-${id}`}
+    >
       <img 
         src={imageUrl} 
         alt={name}
@@ -100,7 +112,7 @@ const AttractionCard = ({
           )}
         </div>
       </div>
-    </div>
+    </a>
   );
 };
 
