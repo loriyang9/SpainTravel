@@ -204,10 +204,12 @@ const DailyItinerary = () => {
                             <p className="text-muted-foreground mb-2">{activity.description}</p>
                           )}
                           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                            <span className="flex items-center">
-                              <MapPin className="w-3 h-3 mr-1" />
-                              {activity.location}
-                            </span>
+                            {activity.location && activity.location.trim() && (
+                              <span className="flex items-center">
+                                <MapPin className="w-3 h-3 mr-1" />
+                                {activity.location}
+                              </span>
+                            )}
                             <span className="flex items-center">
                               <Clock className="w-3 h-3 mr-1" />
                               {activity.duration}
