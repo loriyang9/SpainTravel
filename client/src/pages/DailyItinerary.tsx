@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link, useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { ItineraryDay } from "@shared/schema";
+import { openLocationInGoogleMaps } from "@/utils/mapUtils";
 
 const DailyItinerary = () => {
   const { dayNumber } = useParams();
@@ -205,10 +206,15 @@ const DailyItinerary = () => {
                           )}
                           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                             {activity.location && activity.location.trim() && (
-                              <span className="flex items-center">
-                                <MapPin className="w-3 h-3 mr-1" />
+                              <button 
+                                onClick={() => openLocationInGoogleMaps(activity.location)}
+                                className="flex items-center text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors group"
+                                data-testid={`location-${index}`}
+                                title={`在 Google Maps 中查看 ${activity.location}`}
+                              >
+                                <MapPin className="w-3 h-3 mr-1 group-hover:scale-110 transition-transform" />
                                 {activity.location}
-                              </span>
+                              </button>
                             )}
                             <span className="flex items-center">
                               <Clock className="w-3 h-3 mr-1" />
@@ -262,7 +268,14 @@ const DailyItinerary = () => {
                       住宿資訊
                     </h3>
                     <div className="p-4 bg-muted/20 rounded-lg" data-testid="accommodation">
-                      <p className="font-medium">{currentItinerary.accommodation}</p>
+                      <button 
+                        onClick={() => openLocationInGoogleMaps(currentItinerary.accommodation)}
+                        className="font-medium text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors group text-left"
+                        title={`在 Google Maps 中查看 ${currentItinerary.accommodation}`}
+                      >
+                        <MapPin className="w-4 h-4 mr-2 inline group-hover:scale-110 transition-transform" />
+                        {currentItinerary.accommodation}
+                      </button>
                     </div>
                   </div>
                 )}
