@@ -166,7 +166,6 @@ const Home = () => {
             alt="Golden hour aerial view of Barcelona with Sagrada Familia" 
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 hero-gradient"></div>
         </div>
         
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
