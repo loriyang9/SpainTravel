@@ -1,10 +1,15 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { z } from "zod";
+import express from "express";
+import path from "path";
 import GoogleSheetsService from "./services/googleSheets.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const googleSheetsService = new GoogleSheetsService();
+
+  // Serve uploaded assets statically
+  app.use('/attached_assets', express.static(path.join(process.cwd(), 'attached_assets')));
 
   // Google Sheets API endpoints
   app.get("/api/itinerary", async (req, res) => {

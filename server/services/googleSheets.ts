@@ -499,7 +499,7 @@ class GoogleSheetsService {
     // Day-specific themed images for perfect content matching
     const dayThemeMap: { [key: number]: string } = {
       0: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Airplane wing at sunset - departure
-      1: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona cityscape - jet lag recovery
+      1: '/attached_assets/IMG_5929_1757347793923.jpeg', // 用戶自定義 Day 1 照片 - 調時差日
       2: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Sagrada Familia golden hour - Gaudi architecture Part I
       3: 'https://images.unsplash.com/photo-1558642084-fd07fae5282e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Park Guell colorful mosaics - Gaudi architecture Part II
       4: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona beach and Mediterranean - relaxation day
