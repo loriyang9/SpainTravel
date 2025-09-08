@@ -349,19 +349,7 @@ const Home = () => {
       {/* Footer */}
       <footer className="bg-secondary text-secondary-foreground py-12 px-6" data-testid="footer">
         <div className="max-w-7xl mx-auto">
-          <div className="max-w-md mx-auto mb-8">
-            <div>
-              <h4 className="font-semibold mb-4">緊急聯絡</h4>
-              <ul className="space-y-2 text-sm opacity-80">
-                <li>📞 台灣：+886-2-xxxx-xxxx</li>
-                <li>📞 西班牙：+34-xxx-xxx-xxx</li>
-                <li>📧 travel@example.com</li>
-                <li>🏥 緊急醫療：112</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-secondary-foreground/20 pt-8 text-center text-sm opacity-60">
+          <div className="text-center text-sm opacity-60">
             <p>&copy; 2025 西班牙金秋之旅 | Golden Moment, Autumn Journey | 用心規劃每一個美好時刻</p>
           </div>
         </div>
