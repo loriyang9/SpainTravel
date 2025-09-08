@@ -172,7 +172,7 @@ const Home = () => {
           <h1 className="md:text-7xl font-bold text-white mb-6 font-serif animate-fade-in text-center text-[50px]">Golden Moment, Autumn Journey</h1>
           
           {/* Countdown Timer - Dynamic */}
-          <div className="mb-12 flex justify-center" data-testid="countdown-section">
+          <div className="mb-8 flex justify-center" data-testid="countdown-section">
             {new Date() < departureDate ? (
               <CountdownTimer
                 targetDate={departureDate}
