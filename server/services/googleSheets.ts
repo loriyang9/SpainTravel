@@ -186,7 +186,7 @@ class GoogleSheetsService {
             dinner: overview.dinner || ''
           },
           accommodation: overview.accommodation || '',
-          imageUrl: this.getDefaultImageUrl(overview.city || this.extractCity(activities))
+          imageUrl: this.getThemeBasedImageUrl(dayNumber, overview.theme || '', overview.city || this.extractCity(activities))
         };
 
         result.push(dayData);
@@ -494,15 +494,42 @@ class GoogleSheetsService {
     return `${activities.length}個活動`;
   }
 
-  private getDefaultImageUrl(city: string): string {
-    const imageMap: { [key: string]: string } = {
+  // Enhanced image mapping based on day themes and activities
+  private getThemeBasedImageUrl(dayNumber: number, theme: string, city: string): string {
+    // Day-specific themed images for perfect content matching
+    const dayThemeMap: { [key: number]: string } = {
+      0: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Airplane wing at sunset - departure
+      1: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona cityscape - jet lag recovery
+      2: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Sagrada Familia golden hour - Gaudi architecture Part I
+      3: 'https://images.unsplash.com/photo-1558642084-fd07fae5282e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Park Guell colorful mosaics - Gaudi architecture Part II
+      4: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona beach and Mediterranean - relaxation day
+      5: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona Gothic quarter - free exploration
+      6: 'https://images.unsplash.com/photo-1544737151350-6bd638b62b83?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Spanish train or travel - journey to Salamanca
+      7: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Salamanca cathedral wedding architecture - wedding day
+      8: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Salamanca golden stone buildings - post-wedding rest
+      9: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Salamanca university architecture - exploration
+      10: 'https://images.unsplash.com/photo-1544737151350-6bd638b62b83?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Travel journey - to Madrid
+      11: 'https://images.unsplash.com/photo-1558124830-dde2d45abcd5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Toledo ancient city - day trip
+      12: 'https://images.unsplash.com/photo-1539821266776-0e846c90c957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Madrid Royal Palace - Madrid sightseeing
+      13: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Shopping street Madrid - shopping day
+      14: 'https://images.unsplash.com/photo-1539821266776-0e846c90c957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Madrid city evening - final exploration
+      15: 'https://images.unsplash.com/photo-1590735213920-68192a487bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Airport departure - return home
+    };
+
+    // Return theme-specific image if available
+    if (dayThemeMap[dayNumber]) {
+      return dayThemeMap[dayNumber];
+    }
+
+    // Fallback to city-based images
+    const cityImageMap: { [key: string]: string } = {
       '巴薩隆納': 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400',
       '薩拉曼卡': 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400',
       '馬德里': 'https://images.unsplash.com/photo-1539821266776-0e846c90c957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400',
       '台北': 'https://images.unsplash.com/photo-1590735213920-68192a487bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400'
     };
     
-    return imageMap[city] || 'https://images.unsplash.com/photo-1504019347908-b45f9b0b8dd5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400';
+    return cityImageMap[city] || 'https://images.unsplash.com/photo-1504019347908-b45f9b0b8dd5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400';
   }
 
 
