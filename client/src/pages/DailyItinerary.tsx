@@ -128,7 +128,16 @@ const DailyItinerary = () => {
                     <div className="flex items-center space-x-4 text-muted-foreground">
                       <span className="flex items-center">
                         <Calendar className="w-4 h-4 mr-1" />
-                        {currentItinerary.date}
+                        {(() => {
+                          // 將日期從 "2025/10/4 週六" 轉換為 "10/4 (六)"
+                          const dateStr = currentItinerary.date;
+                          const match = dateStr.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})\s*週(.)/);
+                          if (match) {
+                            const [, year, month, day, weekday] = match;
+                            return `${month}/${day} (${weekday})`;
+                          }
+                          return dateStr; // 如果格式不匹配，返回原始格式
+                        })()}
                       </span>
                       <span className="flex items-center">
                         <MapPin className="w-4 h-4 mr-1" />
