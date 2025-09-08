@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link, useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { ItineraryDay } from "@shared/schema";
-import { openLocationInGoogleMaps } from "@/utils/mapUtils";
+import { openLocationInGoogleMaps, isValidLocation } from "@/utils/mapUtils";
 
 const DailyItinerary = () => {
   const { dayNumber } = useParams();
@@ -268,14 +268,21 @@ const DailyItinerary = () => {
                       住宿資訊
                     </h3>
                     <div className="p-4 bg-muted/20 rounded-lg" data-testid="accommodation">
-                      <button 
-                        onClick={() => openLocationInGoogleMaps(currentItinerary.accommodation)}
-                        className="font-medium text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors group text-left"
-                        title={`在 Google Maps 中查看 ${currentItinerary.accommodation}`}
-                      >
-                        <MapPin className="w-4 h-4 mr-2 inline group-hover:scale-110 transition-transform" />
-                        {currentItinerary.accommodation}
-                      </button>
+                      {isValidLocation(currentItinerary.accommodation) ? (
+                        <button 
+                          onClick={() => openLocationInGoogleMaps(currentItinerary.accommodation)}
+                          className="font-medium text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors group text-left"
+                          title={`在 Google Maps 中查看 ${currentItinerary.accommodation}`}
+                        >
+                          <MapPin className="w-4 h-4 mr-2 inline group-hover:scale-110 transition-transform" />
+                          {currentItinerary.accommodation}
+                        </button>
+                      ) : (
+                        <div className="font-medium flex items-center">
+                          <Bed className="w-4 h-4 mr-2" />
+                          {currentItinerary.accommodation}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

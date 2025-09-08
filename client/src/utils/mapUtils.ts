@@ -43,6 +43,42 @@ export function createGoogleMapsUrl(locationName: string): string {
 }
 
 /**
+ * 檢查是否為有效的地理位置
+ * @param text 文字內容
+ * @returns 是否為有效地理位置
+ */
+export function isValidLocation(text: string): boolean {
+  if (!text || !text.trim()) {
+    return false;
+  }
+  
+  const trimmedText = text.trim().toLowerCase();
+  
+  // 排除非地理位置的描述性文字
+  const nonLocationPhrases = [
+    '飛機上好好睡一覺',
+    '飛機上',
+    '機上',
+    '飛行中',
+    '在飛機上',
+    '途中',
+    '旅途中',
+    '無住宿',
+    '不住宿',
+    '休息'
+  ];
+  
+  // 檢查是否包含非地理位置的關鍵字
+  for (const phrase of nonLocationPhrases) {
+    if (trimmedText.includes(phrase.toLowerCase())) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+/**
  * 打開 Google Maps 在新分頁
  * @param locationName 地點名稱
  */
