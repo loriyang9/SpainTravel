@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import AttractionCard from "@/components/AttractionCard";
+import DynamicMap from "@/components/DynamicMap";
 import { useQuery } from "@tanstack/react-query";
 import type { Attraction } from "@shared/schema";
 
@@ -63,20 +64,11 @@ const KeyAttractions = () => {
           <p className="text-lg text-muted-foreground">你可能會想知道的景點介紹</p>
         </div>
 
-        {/* Google Maps - 自訂標註地圖 */}
+        {/* 動態景點地圖 */}
         <div className="mb-8 w-full" data-testid="attractions-map">
-          {/* 嘗試方法1：直接嵌入分享連結 */}
-          <iframe 
-            src="https://maps.app.goo.gl/QM9g5WK752QXDyaM9" 
-            width="100%" 
-            height="500"
-            style={{ border: 0, borderRadius: '8px' }}
-            allowFullScreen={true}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="shadow-lg"
-            title="西班牙景點分布地圖 - 自訂標註"
-          />
+          <h2 className="text-2xl font-bold mb-4 text-foreground font-serif">景點分布地圖</h2>
+          <p className="text-sm text-muted-foreground mb-4">點擊地圖上的圖標查看景點詳細資訊</p>
+          <DynamicMap height={500} className="" />
         </div>
 
         {/* Filters */}
@@ -151,7 +143,7 @@ const KeyAttractions = () => {
                 city={attraction.city}
                 category={attraction.category}
                 description={attraction.description}
-                additionalInfo={attraction.additionalInfo}
+                additionalInfo={attraction.visitDuration || attraction.ticketRequired || ''}
                 imageUrl={attraction.imageUrl || 'https://via.placeholder.com/400x300?text=景點圖片'}
               />
             ))}

@@ -1,13 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Attraction } from "@shared/schema";
-
-// Declare global Google Maps types
-declare global {
-  interface Window {
-    google: typeof google;
-  }
-}
+import '../types/google.d.ts';
 
 interface DynamicMapProps {
   height?: number;
