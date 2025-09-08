@@ -247,7 +247,7 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
                     <span>📍</span>
                     <span>${attraction.city}</span>
                   </div>
-                  <a href="${googleMapsUrl}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background-color 0.2s;">
+                  <a href="${googleMapsUrl}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 8px 12px; border-radius: 16px; text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);">
                     <span>🗺️</span>
                     <span>在 Google Maps 中查看</span>
                   </a>
