@@ -470,14 +470,21 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
         }
       });
 
-      // 調整地圖視野以包含所有標記
+      // 根據智能中心邏輯決定是否調整地圖視野
       if (markersAdded > 0) {
-        map.fitBounds(bounds);
-        // 避免過度放大單一標記
-        const listener = window.google.maps.event.addListener(map, 'idle', () => {
-          if (map.getZoom()! > 15) map.setZoom(15);
-          window.google.maps.event.removeListener(listener);
-        });
+        // 只有在用戶位置模式下才自動調整視野以包含所有標記
+        if (mapCenter.source === 'user') {
+          map.fitBounds(bounds);
+          // 避免過度放大單一標記
+          const listener = window.google.maps.event.addListener(map, 'idle', () => {
+            if (map.getZoom()! > 15) map.setZoom(15);
+            window.google.maps.event.removeListener(listener);
+          });
+        } else {
+          // 保持智能中心點和預設縮放等級
+          map.setCenter({ lat: mapCenter.lat, lng: mapCenter.lng });
+          map.setZoom(mapCenter.source === 'itinerary' ? 8 : 6);
+        }
         
         console.log(`成功添加 ${markersAdded} 個景點標記到地圖`);
       } else {
