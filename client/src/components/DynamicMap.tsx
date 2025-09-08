@@ -2,6 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Attraction } from "@shared/schema";
 
+// Declare global Google Maps types
+declare global {
+  interface Window {
+    google: typeof google;
+  }
+}
+
 interface DynamicMapProps {
   height?: number;
   className?: string;
@@ -242,10 +249,10 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
                     <span>📍</span>
                     <span>${attraction.city}</span>
                   </div>
-                  ${attraction.additionalInfo ? 
+                  ${attraction.highlights ? 
                     `<div style="display: flex; align-items: center; gap: 8px;">
-                      <span>ℹ️</span>
-                      <span>${attraction.additionalInfo}</span>
+                      <span>⭐</span>
+                      <span>亮點：${Array.isArray(attraction.highlights) ? attraction.highlights.join(', ') : attraction.highlights}</span>
                     </div>` : ''
                   }
                   ${attraction.visitDuration ? 
