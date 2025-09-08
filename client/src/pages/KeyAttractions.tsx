@@ -66,7 +66,7 @@ const KeyAttractions = () => {
         {/* Google Maps */}
         <div className="mb-8 w-full" data-testid="attractions-map">
           <iframe 
-            src="https://www.google.com/maps/d/u/0/embed?mid=1pxHvN6b8YAmYN_1SdTzF7uEQr-y5VRo&ehbc=2E312F&noprof=1" 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d759250.1278228094!2d1.6863823!3d41.6961725!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDM5JzU4LjIiTiAywrAwNScxNC4wIkU!5e0!3m2!1szh-TW!2ses!4v1609459200000!5m2!1szh-TW!2ses" 
             width="100%" 
             height="500"
             style={{ border: 0, borderRadius: '8px' }}
