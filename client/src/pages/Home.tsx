@@ -349,17 +349,7 @@ const Home = () => {
       {/* Footer */}
       <footer className="bg-secondary text-secondary-foreground py-12 px-6" data-testid="footer">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Sun className="h-6 w-6 text-primary" />
-                <h3 className="text-xl font-bold font-serif">西班牙金秋之旅</h3>
-              </div>
-              <p className="text-sm opacity-80">
-                探索西班牙的黃金時光，感受秋日的浪漫與熱情。{actualTripDays}天深度之旅，帶您領略伊比利亞半島的文化瑰寶。
-              </p>
-            </div>
-            
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
               <h4 className="font-semibold mb-4">快速連結</h4>
               <ul className="space-y-2 text-sm opacity-80">
