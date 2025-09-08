@@ -504,14 +504,14 @@ class GoogleSheetsService {
       3: 'https://images.unsplash.com/photo-1558642084-fd07fae5282e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Park Guell colorful mosaics - Gaudi architecture Part II
       4: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona beach and Mediterranean - relaxation day
       5: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Barcelona Gothic quarter - free exploration
-      6: 'https://images.unsplash.com/photo-1544737151350-6bd638b62b83?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Spanish train or travel - journey to Salamanca
-      7: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Salamanca cathedral wedding architecture - wedding day
+      6: 'https://images.unsplash.com/photo-1554386690-91273de46bf6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Spanish train or travel - journey to Salamanca
+      7: 'https://images.unsplash.com/photo-1573436558089-5d8e2e7eed8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Salamanca cathedral wedding architecture - wedding day
       8: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Salamanca golden stone buildings - post-wedding rest
       9: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Salamanca university architecture - exploration
-      10: 'https://images.unsplash.com/photo-1544737151350-6bd638b62b83?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Travel journey - to Madrid
-      11: 'https://images.unsplash.com/photo-1558124830-dde2d45abcd5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Toledo ancient city - day trip
+      10: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Travel journey - to Madrid
+      11: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Toledo ancient city - day trip
       12: 'https://images.unsplash.com/photo-1539821266776-0e846c90c957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Madrid Royal Palace - Madrid sightseeing
-      13: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Shopping street Madrid - shopping day
+      13: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Shopping street Madrid - shopping day
       14: 'https://images.unsplash.com/photo-1539821266776-0e846c90c957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Madrid city evening - final exploration
       15: 'https://images.unsplash.com/photo-1590735213920-68192a487bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Airport departure - return home
     };
