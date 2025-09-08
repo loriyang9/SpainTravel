@@ -225,6 +225,9 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
 
           // 添加點擊監聽器顯示資訊窗口
           marker.addListener('click', () => {
+            // 建立 Google Maps 連結
+            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${attraction.lat},${attraction.lng}`;
+            
             infoWindow.setContent(`
               <div style="max-width: 300px; padding: 12px; font-family: system-ui, -apple-system, sans-serif;">
                 <h3 style="margin: 0 0 8px 0; color: #1f2937; font-size: 18px; font-weight: 600;">
@@ -239,28 +242,14 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
                   ${attraction.description}
                 </p>
                 <div style="border-top: 1px solid #e5e7eb; padding-top: 8px; margin-top: 12px; font-size: 13px; color: #6b7280;">
-                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                     <span>📍</span>
                     <span>${attraction.city}</span>
                   </div>
-                  ${attraction.highlights ? 
-                    `<div style="display: flex; align-items: center; gap: 8px;">
-                      <span>⭐</span>
-                      <span>亮點：${Array.isArray(attraction.highlights) ? attraction.highlights.join(', ') : attraction.highlights}</span>
-                    </div>` : ''
-                  }
-                  ${attraction.visitDuration ? 
-                    `<div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-                      <span>⏱️</span>
-                      <span>建議參觀時間：${attraction.visitDuration}</span>
-                    </div>` : ''
-                  }
-                  ${attraction.ticketRequired ? 
-                    `<div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-                      <span>🎫</span>
-                      <span>${attraction.ticketRequired}</span>
-                    </div>` : ''
-                  }
+                  <a href="${googleMapsUrl}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background-color 0.2s;">
+                    <span>🗺️</span>
+                    <span>在 Google Maps 中查看</span>
+                  </a>
                 </div>
               </div>
             `);
