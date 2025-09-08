@@ -63,10 +63,11 @@ const KeyAttractions = () => {
           <p className="text-lg text-muted-foreground">你可能會想知道的景點介紹</p>
         </div>
 
-        {/* Google Maps */}
+        {/* Google Maps - 自訂標註地圖 */}
         <div className="mb-8 w-full" data-testid="attractions-map">
+          {/* 嘗試方法1：直接嵌入分享連結 */}
           <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d759250.1278228094!2d1.6863823!3d41.6961725!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDM5JzU4LjIiTiAywrAwNScxNC4wIkU!5e0!3m2!1szh-TW!2ses!4v1609459200000!5m2!1szh-TW!2ses" 
+            src="https://maps.app.goo.gl/QM9g5WK752QXDyaM9" 
             width="100%" 
             height="500"
             style={{ border: 0, borderRadius: '8px' }}
@@ -74,7 +75,7 @@ const KeyAttractions = () => {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             className="shadow-lg"
-            title="西班牙景點分布地圖"
+            title="西班牙景點分布地圖 - 自訂標註"
           />
         </div>
 
