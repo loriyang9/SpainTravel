@@ -520,8 +520,8 @@ class GoogleSheetsService {
           category: rowData[4] || '其他',
           description: rowData[5] || '', // 重點特色
           additionalInfo: rowData[6] || '', // 其他補充
-          visitDuration: '2-3小時',
-          ticketRequired: '建議預訂',
+          visitDuration: null,
+          ticketRequired: null,
           imageUrl: this.getAttractionImageUrl(rowData[1] || ''),
           highlights: this.parseHighlights(rowData[5] || '') // 重點特色
         };

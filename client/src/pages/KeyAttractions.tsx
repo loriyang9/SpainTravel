@@ -143,7 +143,7 @@ const KeyAttractions = () => {
                 city={attraction.city}
                 category={attraction.category}
                 description={attraction.description}
-                additionalInfo={attraction.visitDuration || attraction.ticketRequired || ''}
+                additionalInfo={attraction.additionalInfo}
                 imageUrl={attraction.imageUrl || 'https://via.placeholder.com/400x300?text=景點圖片'}
               />
             ))}
