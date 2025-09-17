@@ -78,7 +78,7 @@ const DailyItinerary = () => {
               <CardContent>
                 <div className="relative">
                   {/* 響應式容器：大螢幕完整高度，小螢幕固定高度 */}
-                  <div className="lg:space-y-2 lg:max-h-none lg:overflow-visible max-h-[200px] overflow-y-auto space-y-2">
+                  <div className="lg:space-y-2 lg:max-h-none lg:overflow-visible max-h-[240px] overflow-y-auto space-y-2">
                     {dailyItinerary.map((day) => (
                       <button
                         key={day.dayNumber}
