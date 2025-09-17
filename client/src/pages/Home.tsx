@@ -211,7 +211,7 @@ const Home = () => {
             </h2>
             <p className="text-lg text-muted-foreground mb-6">{actualTripDays}天西班牙深度之旅精彩規劃</p>
             
-            <Link href="/itinerary">
+            <Link href="/itinerary/day01">
               <Button 
                 className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-8 py-3 rounded-lg text-lg font-semibold transition-colors"
                 data-testid="view-full-itinerary"
@@ -260,7 +260,7 @@ const Home = () => {
                       duration={day.estimatedDuration || ''}
                       imageUrl={day.imageUrl || ''}
                       color={`chart-${day.dayNumber <= 5 ? day.dayNumber : 5}`}
-                      onClick={() => setLocation(`/itinerary/${day.dayNumber}`)}
+                      onClick={() => setLocation(`/itinerary/day${day.dayNumber.toString().padStart(2, '0')}`)}
                     />
                   </div>
                 ))}
