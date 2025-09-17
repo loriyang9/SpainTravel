@@ -18,6 +18,7 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/itinerary" component={DailyItinerary} />
         <Route path="/itinerary/:dayNumber" component={DailyItinerary} />
+        <Route path="/itinerary/day-:dayStr" component={DailyItinerary} />
         <Route path="/reminders" component={TravelReminders} />
         <Route path="/attractions" component={KeyAttractions} />
         <Route component={NotFound} />

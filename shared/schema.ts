@@ -106,3 +106,24 @@ export const insertDescriptionsCacheSchema = createInsertSchema(descriptionsCach
 
 export type DescriptionsCache = typeof descriptionsCache.$inferSelect;
 export type InsertDescriptionsCache = z.infer<typeof insertDescriptionsCacheSchema>;
+
+// Additional types for frontend usage
+export interface Activity {
+  time: string;
+  name: string;
+  location?: string;
+  duration: string;
+  description?: string;
+  notes?: string;
+}
+
+export interface Meals {
+  breakfast?: string;
+  lunch?: string;
+  dinner?: string;
+}
+
+export interface ReminderItem {
+  text: string;
+  completed?: boolean;
+}
