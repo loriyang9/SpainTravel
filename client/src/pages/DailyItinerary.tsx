@@ -96,7 +96,6 @@ const DailyItinerary = () => {
                       <button
                         key={day.dayNumber}
                         onClick={() => {
-                          setSelectedDay(day.dayNumber);
                           setLocation(`/itinerary/day-${day.dayNumber}`);
                         }}
                         className={`w-full text-left p-3 rounded-lg transition-colors ${
@@ -223,7 +222,7 @@ const DailyItinerary = () => {
                           <div className="flex flex-wrap items-start justify-start gap-x-4 gap-y-2 text-sm text-muted-foreground">
                             {activity.location && activity.location.trim() && (
                               <button 
-                                onClick={() => openLocationInGoogleMaps(activity.location)}
+                                onClick={() => openLocationInGoogleMaps(activity.location || '')}
                                 className="flex items-start text-left text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors group"
                                 data-testid={`location-${index}`}
                                 title={`在 Google Maps 中查看 ${activity.location}`}
