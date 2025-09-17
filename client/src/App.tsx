@@ -16,7 +16,8 @@ function Router() {
       <Navigation />
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/itinerary/day:dayNumber" component={DailyItinerary} />
+        <Route path="/itinerary" component={DailyItinerary} />
+        <Route path="/itinerary/:dayNumber" component={DailyItinerary} />
         <Route path="/reminders" component={TravelReminders} />
         <Route path="/attractions" component={KeyAttractions} />
         <Route component={NotFound} />

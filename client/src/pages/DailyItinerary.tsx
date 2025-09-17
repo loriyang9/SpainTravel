@@ -3,43 +3,19 @@ import { Calendar, Clock, MapPin, Utensils, Bed, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link, useParams, useLocation } from "wouter";
+import { Link, useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { ItineraryDay } from "@shared/schema";
 import { openLocationInGoogleMaps, isValidLocation } from "@/utils/mapUtils";
 
-// Helper function to format day number with leading zero
-const formatDayNumber = (day: number): string => {
-  return day.toString().padStart(2, '0');
-};
-
-// Helper function to parse day number from URL parameter
-const parseDayNumber = (dayParam: string | undefined): number => {
-  if (!dayParam) return 0;
-  const parsed = parseInt(dayParam, 10);
-  return isNaN(parsed) ? 0 : parsed;
-};
-
 const DailyItinerary = () => {
   const { dayNumber } = useParams();
-  const [, setLocation] = useLocation();
-  const [selectedDay, setSelectedDay] = useState(parseDayNumber(dayNumber));
-
-  // Navigation helper functions
-  const goToPreviousDay = () => {
-    const previousDay = Math.max(0, selectedDay - 1);
-    setLocation(`/itinerary/day${formatDayNumber(previousDay)}`);
-  };
-
-  const goToNextDay = () => {
-    const nextDay = Math.min(dailyItinerary?.length - 1 || 0, selectedDay + 1);
-    setLocation(`/itinerary/day${formatDayNumber(nextDay)}`);
-  };
+  const [selectedDay, setSelectedDay] = useState(dayNumber ? parseInt(dayNumber) : 0);
   
   // Update selectedDay when URL parameter changes
   useEffect(() => {
     if (dayNumber) {
-      setSelectedDay(parseDayNumber(dayNumber));
+      setSelectedDay(parseInt(dayNumber));
     }
   }, [dayNumber]);
   
@@ -106,7 +82,7 @@ const DailyItinerary = () => {
                     {dailyItinerary.map((day) => (
                       <button
                         key={day.dayNumber}
-                        onClick={() => setLocation(`/itinerary/day${formatDayNumber(day.dayNumber)}`)}
+                        onClick={() => setSelectedDay(day.dayNumber)}
                         className={`w-full text-left p-3 rounded-lg transition-colors ${
                           selectedDay === day.dayNumber
                             ? 'bg-primary text-primary-foreground'
@@ -315,7 +291,7 @@ const DailyItinerary = () => {
                 <div className="flex items-center justify-between pt-6 border-t">
                   <Button
                     variant="outline"
-                    onClick={goToPreviousDay}
+                    onClick={() => setSelectedDay(Math.max(0, selectedDay - 1))}
                     disabled={selectedDay === 0}
                     data-testid="previous-day"
                   >
@@ -324,7 +300,7 @@ const DailyItinerary = () => {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={goToNextDay}
+                    onClick={() => setSelectedDay(Math.min(dailyItinerary.length - 1, selectedDay + 1))}
                     disabled={selectedDay >= dailyItinerary.length - 1}
                     data-testid="next-day"
                   >
