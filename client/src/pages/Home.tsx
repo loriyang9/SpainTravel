@@ -264,7 +264,7 @@ const Home = () => {
                 className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-8 py-3 rounded-lg text-lg font-semibold transition-colors"
                 data-testid="view-full-itinerary"
               >
-                查看完整行程
+                查看每日完整行程
                 <Calendar className="ml-2 w-5 h-5" />
               </Button>
             </Link>
