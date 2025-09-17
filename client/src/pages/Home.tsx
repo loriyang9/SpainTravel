@@ -205,11 +205,21 @@ const Home = () => {
       {/* Itinerary Preview */}
       <section id="itinerary-preview" className="py-16 px-6 bg-background" data-testid="itinerary-preview-section">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground font-serif">
               每日行程預覽
             </h2>
-            <p className="text-lg text-muted-foreground">{actualTripDays}天西班牙深度之旅精彩規劃</p>
+            <p className="text-lg text-muted-foreground mb-6">{actualTripDays}天西班牙深度之旅精彩規劃</p>
+            
+            <Link href="/itinerary">
+              <Button 
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-8 py-3 rounded-lg text-lg font-semibold transition-colors"
+                data-testid="view-full-itinerary"
+              >
+                查看每日完整行程
+                <Calendar className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
           </div>
           
           <div className="relative mb-8">
@@ -256,18 +266,6 @@ const Home = () => {
                 ))}
               </div>
             </div>
-          </div>
-          
-          <div className="text-center">
-            <Link href="/itinerary">
-              <Button 
-                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-8 py-3 rounded-lg text-lg font-semibold transition-colors"
-                data-testid="view-full-itinerary"
-              >
-                查看每日完整行程
-                <Calendar className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
