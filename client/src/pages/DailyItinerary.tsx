@@ -3,34 +3,21 @@ import { Calendar, Clock, MapPin, Utensils, Bed, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link, useParams, useLocation } from "wouter";
+import { Link, useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import type { ItineraryDay, Activity, Meals } from "@shared/schema";
+import type { ItineraryDay } from "@shared/schema";
 import { openLocationInGoogleMaps, isValidLocation } from "@/utils/mapUtils";
 
 const DailyItinerary = () => {
-  const { dayNumber, dayStr } = useParams();
-  const [, setLocation] = useLocation();
-  
-  // Helper function to parse day parameter
-  const parseDayParameter = () => {
-    if (dayStr) {
-      // Handle day-X format
-      return parseInt(dayStr);
-    } else if (dayNumber) {
-      // Handle direct number format
-      return parseInt(dayNumber);
-    }
-    return 0;
-  };
-  
-  const [selectedDay, setSelectedDay] = useState(parseDayParameter());
+  const { dayNumber } = useParams();
+  const [selectedDay, setSelectedDay] = useState(dayNumber ? parseInt(dayNumber) : 0);
   
   // Update selectedDay when URL parameter changes
   useEffect(() => {
-    const newDay = parseDayParameter();
-    setSelectedDay(newDay);
-  }, [dayNumber, dayStr]);
+    if (dayNumber) {
+      setSelectedDay(parseInt(dayNumber));
+    }
+  }, [dayNumber]);
   
   // 頁面載入時自動滾動到頂部
   useEffect(() => {
@@ -95,9 +82,7 @@ const DailyItinerary = () => {
                     {dailyItinerary.map((day) => (
                       <button
                         key={day.dayNumber}
-                        onClick={() => {
-                          setLocation(`/itinerary/day-${day.dayNumber}`);
-                        }}
+                        onClick={() => setSelectedDay(day.dayNumber)}
                         className={`w-full text-left p-3 rounded-lg transition-colors ${
                           selectedDay === day.dayNumber
                             ? 'bg-primary text-primary-foreground'
@@ -170,7 +155,7 @@ const DailyItinerary = () => {
                 {/* Hero Image */}
                 <div className="mb-6">
                   <img
-                    src={currentItinerary.imageUrl || ''}
+                    src={currentItinerary.imageUrl}
                     alt={currentItinerary.title}
                     className="w-full h-64 object-cover rounded-lg"
                   />
@@ -190,7 +175,7 @@ const DailyItinerary = () => {
                     詳細活動安排
                   </h3>
                   <div className="space-y-4">
-                    {(currentItinerary.activities as Activity[])?.map((activity, index) => (
+                    {currentItinerary.activities.map((activity, index) => (
                       <div 
                         key={index}
                         className="flex items-start space-x-4 p-4 bg-accent/10 rounded-lg"
@@ -222,7 +207,7 @@ const DailyItinerary = () => {
                           <div className="flex flex-wrap items-start justify-start gap-x-4 gap-y-2 text-sm text-muted-foreground">
                             {activity.location && activity.location.trim() && (
                               <button 
-                                onClick={() => openLocationInGoogleMaps(activity.location || '')}
+                                onClick={() => openLocationInGoogleMaps(activity.location)}
                                 className="flex items-start text-left text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors group"
                                 data-testid={`location-${index}`}
                                 title={`在 Google Maps 中查看 ${activity.location}`}
@@ -254,22 +239,22 @@ const DailyItinerary = () => {
                     用餐安排
                   </h3>
                   <div className="grid md:grid-cols-3 gap-4">
-                    {(currentItinerary.meals as Meals)?.breakfast && (
+                    {currentItinerary.meals.breakfast && (
                       <div className="p-4 bg-chart-1/10 rounded-lg" data-testid="breakfast">
                         <h4 className="font-semibold text-chart-1 mb-2">早餐</h4>
-                        <p className="text-sm">{(currentItinerary.meals as Meals).breakfast}</p>
+                        <p className="text-sm">{currentItinerary.meals.breakfast}</p>
                       </div>
                     )}
-                    {(currentItinerary.meals as Meals)?.lunch && (
+                    {currentItinerary.meals.lunch && (
                       <div className="p-4 bg-chart-2/10 rounded-lg" data-testid="lunch">
                         <h4 className="font-semibold text-chart-2 mb-2">午餐</h4>
-                        <p className="text-sm">{(currentItinerary.meals as Meals).lunch}</p>
+                        <p className="text-sm">{currentItinerary.meals.lunch}</p>
                       </div>
                     )}
-                    {(currentItinerary.meals as Meals)?.dinner && (
+                    {currentItinerary.meals.dinner && (
                       <div className="p-4 bg-chart-3/10 rounded-lg" data-testid="dinner">
                         <h4 className="font-semibold text-chart-3 mb-2">晚餐</h4>
-                        <p className="text-sm">{(currentItinerary.meals as Meals).dinner}</p>
+                        <p className="text-sm">{currentItinerary.meals.dinner}</p>
                       </div>
                     )}
                   </div>
@@ -283,9 +268,9 @@ const DailyItinerary = () => {
                       住宿資訊
                     </h3>
                     <div className="p-4 bg-muted/20 rounded-lg" data-testid="accommodation">
-                      {isValidLocation(currentItinerary.accommodation || '') ? (
+                      {isValidLocation(currentItinerary.accommodation) ? (
                         <button 
-                          onClick={() => openLocationInGoogleMaps(currentItinerary.accommodation || '')}
+                          onClick={() => openLocationInGoogleMaps(currentItinerary.accommodation)}
                           className="font-medium text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors group text-left"
                           title={`在 Google Maps 中查看 ${currentItinerary.accommodation}`}
                         >
@@ -306,10 +291,7 @@ const DailyItinerary = () => {
                 <div className="flex items-center justify-between pt-6 border-t">
                   <Button
                     variant="outline"
-                    onClick={() => {
-                      const prevDay = Math.max(0, selectedDay - 1);
-                      setLocation(`/itinerary/day-${prevDay}`);
-                    }}
+                    onClick={() => setSelectedDay(Math.max(0, selectedDay - 1))}
                     disabled={selectedDay === 0}
                     data-testid="previous-day"
                   >
@@ -318,12 +300,8 @@ const DailyItinerary = () => {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => {
-                      const maxDay = Math.max(...dailyItinerary.map(d => d.dayNumber));
-                      const nextDay = Math.min(maxDay, selectedDay + 1);
-                      setLocation(`/itinerary/day-${nextDay}`);
-                    }}
-                    disabled={selectedDay >= Math.max(...dailyItinerary.map(d => d.dayNumber))}
+                    onClick={() => setSelectedDay(Math.min(dailyItinerary.length - 1, selectedDay + 1))}
+                    disabled={selectedDay >= dailyItinerary.length - 1}
                     data-testid="next-day"
                   >
                     下一天

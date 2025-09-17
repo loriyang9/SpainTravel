@@ -7,11 +7,10 @@ import ItineraryCard from "@/components/ItineraryCard";
 import AttractionCard from "@/components/AttractionCard";
 import ReminderCard from "@/components/ReminderCard";
 import { useQuery } from "@tanstack/react-query";
-import type { ItineraryDay, Attraction, TravelReminder, Activity } from "@shared/schema";
+import type { ItineraryDay, Attraction, TravelReminder } from "@shared/schema";
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import barcelonaHeroImage from "@assets/barcelona-card-homepage-1746806969_1757344902015.jpg";
-import { getSmartItineraryRoute, getCurrentTripDay, getCountdownInfo } from "@/utils/dateUtils";
 
 const Home = () => {
   const departureDate = new Date('2025-10-05T00:30:00+08:00'); // Taiwan time
@@ -36,12 +35,28 @@ const Home = () => {
   // Calculate actual trip days (exclude Day 0)
   const actualTripDays = itinerary ? Math.max(...itinerary.filter(d => d.dayNumber > 0).map(d => d.dayNumber)) : 15;
   
+  // Calculate current trip day number
+  const getCurrentTripDay = () => {
+    const now = new Date();
+    const departureTime = departureDate.getTime();
+    const currentTime = now.getTime();
+    
+    if (currentTime < departureTime) {
+      return 0; // 還未出發
+    }
+    
+    // 計算從出發到現在經過的天數
+    const daysSinceDeparture = Math.floor((currentTime - departureTime) / (24 * 60 * 60 * 1000));
+    const tripDay = daysSinceDeparture + 1; // Day 1 是第一天
+    
+    return Math.min(tripDay, actualTripDays); // 不能超過行程最大天數
+  };
 
   // Smart attraction recommendation logic
   const smartAttractions = useMemo(() => {
     if (!itinerary || !attractionsData) return [];
     
-    const currentTripDay = getCurrentTripDay(actualTripDays);
+    const currentTripDay = getCurrentTripDay();
     
     // Find today's itinerary
     const todayItinerary = itinerary.find(day => day.dayNumber === currentTripDay);
@@ -49,10 +64,10 @@ const Home = () => {
     let selectedAttractions: Attraction[] = [];
     
     // Step 1: Get attractions from today's itinerary
-    if (todayItinerary?.activities && Array.isArray(todayItinerary.activities)) {
-      const activityNames = (todayItinerary.activities as Activity[]).map((activity: Activity) => activity.name);
+    if (todayItinerary?.activities) {
+      const activityNames = todayItinerary.activities.map((activity: any) => activity.name);
       const todayAttractions = attractionsData.filter(attraction => 
-        activityNames.some((activityName: string) => 
+        activityNames.some(activityName => 
           attraction.name.includes(activityName) || activityName.includes(attraction.name)
         )
       );
@@ -158,25 +173,21 @@ const Home = () => {
           
           {/* Countdown Timer - Dynamic */}
           <div className="mb-8 flex justify-center" data-testid="countdown-section">
-            {(() => {
-              const countdownInfo = getCountdownInfo();
-              if (countdownInfo.type === 'completed') {
-                return (
-                  <div className="text-center">
-                    <h3 className="text-2xl font-bold text-primary mb-2">{countdownInfo.label}</h3>
-                    <p className="text-muted-foreground">{countdownInfo.description}</p>
-                  </div>
-                );
-              }
-              return (
-                <CountdownTimer
-                  targetDate={countdownInfo.targetDate}
-                  label={countdownInfo.label}
-                  description={countdownInfo.description}
-                  type={countdownInfo.type}
-                />
-              );
-            })()}
+            {new Date() < departureDate ? (
+              <CountdownTimer
+                targetDate={departureDate}
+                label="出發倒數"
+                description="2025年10月5日 00:30 台北時間"
+                type="departure"
+              />
+            ) : (
+              <CountdownTimer
+                targetDate={returnDate}
+                label="返家倒數"
+                description="2025年10月18日 22:05 西班牙時間"
+                type="return"
+              />
+            )}
           </div>
           
           <Button 
@@ -200,7 +211,7 @@ const Home = () => {
             </h2>
             <p className="text-lg text-muted-foreground mb-6">{actualTripDays}天西班牙深度之旅精彩規劃</p>
             
-            <Link href={getSmartItineraryRoute(actualTripDays)}>
+            <Link href="/itinerary">
               <Button 
                 className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-8 py-3 rounded-lg text-lg font-semibold transition-colors"
                 data-testid="view-full-itinerary"
@@ -249,7 +260,7 @@ const Home = () => {
                       duration={day.estimatedDuration || ''}
                       imageUrl={day.imageUrl || ''}
                       color={`chart-${day.dayNumber <= 5 ? day.dayNumber : 5}`}
-                      onClick={() => setLocation(`/itinerary/day-${day.dayNumber}`)}
+                      onClick={() => setLocation(`/itinerary/${day.dayNumber}`)}
                     />
                   </div>
                 ))}
@@ -277,7 +288,8 @@ const Home = () => {
                 city={attraction.city}
                 category={attraction.category}
                 description={attraction.description}
-                imageUrl={attraction.imageUrl || ''}
+                additionalInfo={attraction.additionalInfo}
+                imageUrl={attraction.imageUrl}
               />
             ))}
           </div>
@@ -311,7 +323,7 @@ const Home = () => {
                 key={reminder.id}
                 id={reminder.id}
                 title={reminder.title}
-                items={reminder.items as any}
+                items={reminder.items}
                 icon={reminder.icon}
                 priority={reminder.priority}
                 isPreview={true}
