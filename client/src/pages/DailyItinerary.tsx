@@ -208,7 +208,7 @@ const DailyItinerary = () => {
                             {activity.location && activity.location.trim() && (
                               <button 
                                 onClick={() => openLocationInGoogleMaps(activity.location)}
-                                className="flex items-center text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors group"
+                                className="flex items-start text-left text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors group"
                                 data-testid={`location-${index}`}
                                 title={`在 Google Maps 中查看 ${activity.location}`}
                               >
