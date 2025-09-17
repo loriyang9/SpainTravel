@@ -204,7 +204,7 @@ const DailyItinerary = () => {
                           {activity.description && activity.description.trim() && (
                             <p className="text-muted-foreground mb-2">{activity.description}</p>
                           )}
-                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <div className="flex flex-wrap items-start justify-start gap-x-4 gap-y-2 text-sm text-muted-foreground">
                             {activity.location && activity.location.trim() && (
                               <button 
                                 onClick={() => openLocationInGoogleMaps(activity.location)}
