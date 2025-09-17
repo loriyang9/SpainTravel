@@ -85,19 +85,9 @@ const Navigation = () => {
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="w-80">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center space-x-2">
-                <Sun className="h-6 w-6 text-primary" />
-                <span className="font-bold font-serif">西班牙金秋之旅</span>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(false)}
-                data-testid="mobile-menu-close"
-              >
-                <X className="h-6 w-6" />
-              </Button>
+            <div className="flex items-center space-x-2 mb-8">
+              <Sun className="h-6 w-6 text-primary" />
+              <span className="font-bold font-serif">西班牙金秋之旅</span>
             </div>
             <div className="flex flex-col space-y-4">
               {navItems.map((item) => (
