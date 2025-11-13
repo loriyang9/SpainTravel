@@ -15,6 +15,12 @@ server/.env
 .env.production
 .env.development
 
+# Allow .env.example files (they are safe templates)
+!.env.example
+!client/.env.example
+!server/.env.example
+!**/.env.example
+
 # API keys and credentials
 **/secrets.json
 **/credentials.json
