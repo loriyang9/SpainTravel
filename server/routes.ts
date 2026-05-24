@@ -135,6 +135,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to test OpenAI connectivity
+  app.get("/api/debug/openai", async (req, res) => {
+    try {
+      const openai = (googleSheetsService as any).openai;
+      if (!openai) {
+        return res.status(400).json({ error: "OpenAI client not initialized (no API key?)" });
+      }
+      
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [{ role: "user", content: "Say hello in 5 words" }],
+        max_tokens: 10
+      });
+      
+      res.json({
+        success: true,
+        response: response.choices[0]?.message?.content || ""
+      });
+    } catch (error: any) {
+      console.error("OpenAI test error:", error);
+      res.status(500).json({
+        error: "OpenAI call failed",
+        message: error?.message || String(error),
+        stack: error?.stack,
+        details: error
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
