@@ -114,9 +114,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         rowCount: rawData.length,
         data: rawData
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Debug error for sheet ${req.params.sheetName}:`, error);
-      res.status(500).json({ error: `無法讀取 ${req.params.sheetName} 資料` });
+      res.status(500).json({ 
+        error: `無法讀取 ${req.params.sheetName} 資料`, 
+        message: error?.message || String(error),
+        details: error?.response?.data || error
+      });
     }
   });
 
