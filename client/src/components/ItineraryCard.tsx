@@ -1,5 +1,6 @@
 import { Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { resolveAssetUrl } from "@/lib/api";
 
 interface ItineraryCardProps {
   dayNumber: number;
@@ -25,7 +26,7 @@ const ItineraryCard = ({
   return (
     <div className="bg-card rounded-xl overflow-hidden shadow-sm h-full flex flex-col" data-testid={`itinerary-card-day-${dayNumber}`}>
       <img 
-        src={imageUrl} 
+        src={resolveAssetUrl(imageUrl)} 
         alt={title}
         className="w-full h-48 object-cover flex-shrink-0"
         loading="lazy"

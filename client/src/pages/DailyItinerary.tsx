@@ -7,6 +7,7 @@ import { Link, useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { ItineraryDay } from "@shared/schema";
 import { openLocationInGoogleMaps, isValidLocation } from "@/utils/mapUtils";
+import { resolveAssetUrl } from "@/lib/api";
 
 const DailyItinerary = () => {
   const { dayNumber } = useParams();
@@ -155,7 +156,7 @@ const DailyItinerary = () => {
                 {/* Hero Image */}
                 <div className="mb-6">
                   <img
-                    src={currentItinerary.imageUrl}
+                    src={resolveAssetUrl(currentItinerary.imageUrl)}
                     alt={currentItinerary.title}
                     className="w-full h-64 object-cover rounded-lg"
                   />
