@@ -97,10 +97,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Health check endpoint
   app.get("/api/health", (req, res) => {
+    let clientEmail = "未設定";
+    try {
+      const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON || '{}');
+      clientEmail = credentials.client_email || "未在 JSON 中找到 client_email";
+    } catch (e) {
+      clientEmail = "解析 GOOGLE_SERVICE_ACCOUNT_JSON 失敗";
+    }
+
     res.json({ 
       status: "ok", 
       timestamp: new Date().toISOString(),
-      message: "西班牙金秋之旅 API 正常運行"
+      message: "西班牙金秋之旅 API 正常運行",
+      googleServiceAccountEmail: clientEmail
     });
   });
 
