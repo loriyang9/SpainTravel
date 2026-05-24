@@ -414,22 +414,64 @@ class GoogleSheetsService {
   
   // Template-based fallback generation (no length limit)
   private generateTemplateDescription(dayNumber: number, theme: string, city: string, activities: any[]): string {
-    const mainActivities = activities.slice(0, 2).map(act => act.title).filter(Boolean);
+    // Filter out generic activities to focus on meaningful sightseeing or main events
+    const genericKeywords = ['午餐', '晚餐', '早餐', '吃飯', '集合', '過安檢', '搭車', '回飯店', 'Check-in', '寄存行李', '自然醒'];
+    const meaningfulActivities = activities.filter(act => {
+      const title = act.title || '';
+      return title && !genericKeywords.some(keyword => title.includes(keyword));
+    });
+
+    const mainActs = (meaningfulActivities.length > 0 ? meaningfulActivities : activities)
+      .slice(0, 3)
+      .map(act => act.title)
+      .filter(Boolean);
+
+    const activityCount = mainActs.length;
+    const actListStr = activityCount > 0 ? mainActs.join('、') : '';
     
-    if (theme && city) {
-      if (mainActivities.length > 0) {
-        const activityText = mainActivities.join('、');
-        return `在${city}${theme}，${activityText}，感受西班牙的魅力與文化深度`;
-      } else {
-        return `在${city}體驗${theme}，探索西班牙獨特的文化與風情，留下難忘回憶`;
+    // 1. Special Case: Arrival / Long Flights
+    if (theme.includes('時差') || theme.includes('啟程') || theme.includes('出發') || theme.includes('返家') || theme.includes('回國')) {
+      if (theme.includes('返家') || theme.includes('回國')) {
+        return `今日準備告別美麗的西班牙，收拾滿滿的行李與美好記憶，搭乘豪華客機踏上歸途，為這趟難忘的伊比利半島深度之旅劃下溫馨的句點。`;
       }
-    } else if (city) {
-      return `探索${city}的迷人景色，品味當地文化與美食的精彩體驗，感受伊比利亞半島的魅力`;
-    } else if (theme) {
-      return `${theme}，深度體驗西班牙的歷史文化與自然風光，創造屬於自己的旅行故事`;
-    } else {
-      return `精彩的西班牙旅程，探索當地獨特的文化與美景，在每個角落發現驚喜`;
+      if (activityCount > 0) {
+        return `今日正式啟程！我們將搭乘班機前往西班牙，開啟令人期待的旅程。主要安排了${actListStr}等準備行程，調整好步伐迎接即將到來的冒險。`;
+      }
+      return `今天踏上旅程，我們將搭乘長途班機前往西班牙，在機上好好休息、調整時差，準備迎接接下來精彩豐富的深度文化探索。`;
     }
+
+    // 2. Special Case: Wedding / Ceremonies
+    if (theme.includes('婚禮') || theme.includes('盛宴') || theme.includes('聚會')) {
+      const weddingActs = activities.filter(act => act.title.includes('婚禮') || act.title.includes('儀式') || act.title.includes('Party') || act.title.includes('宴'));
+      const weddingActStr = weddingActs.length > 0 ? weddingActs.map(a => a.title).join('、') : '盛裝出席婚禮';
+      return `今天是此行最特別的重頭戲！我們將在古色古香的${city || '歷史古城'}一同見證神聖浪漫的${weddingActStr}，並在歡樂的氣氛中與親友共度永生難忘的幸福時刻。`;
+    }
+
+    // 3. Special Case: Inter-city Travel Days
+    if (theme.includes('前往') || theme.includes('移防') || theme.includes('移動') || theme.includes('Travel')) {
+      return `今天我們將變更旅程基地，啟程前往${city || '下一站'}。沿途安排了${actListStr || '交通與城市導覽'}，以最悠閒舒適的步調欣賞西班牙多變的地理風光與沿途景色。`;
+    }
+
+    // 4. Special Case: General High-quality Narratives
+    if (theme && city) {
+      if (activityCount === 1) {
+        return `今日在${city}展開『${theme}』主題行程。我們將專注造訪熱門的${mainActs[0]}，放慢腳步用心體會這座城市的獨特文化魅力與美學風情。`;
+      }
+      if (activityCount >= 2) {
+        return `今日在${city}的主題為『${theme}』。我們將一次探訪${actListStr}等經典亮點，在歷史與藝術的交織中，感受最精緻地道的西班牙風情。`;
+      }
+      return `今日在${city}享受自在的『${theme}』生活。沒有繁雜瑣碎的行程限制，讓自己沉浸在異國的街道風情中，創造專屬於我們的旅行插曲。`;
+    }
+
+    // 5. Minimal Fallbacks
+    if (city) {
+      return `今日的腳步踏入迷人的${city}。我們將走訪當地最具代表性的景點與街區，深度感受這座城市獨一無二的歷史底蘊與人文美感。`;
+    }
+    if (theme) {
+      return `今日展開精彩的『${theme}』探索。一邊欣賞令人驚嘆的自然與歷史風光，一邊在行進間發現伊比利亞半島獨特而迷人的文化故事。`;
+    }
+    
+    return `開啟精彩的一天！我們安排了最經典的景點與活動行程，讓您在細微的探索中，深度品味西班牙無與倫比的風情與精緻風貌。`;
   }
 
   private extractCityFromString(text: string): string {
