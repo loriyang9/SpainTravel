@@ -109,7 +109,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       status: "ok", 
       timestamp: new Date().toISOString(),
       message: "西班牙金秋之旅 API 正常運行",
-      googleServiceAccountEmail: clientEmail
+      googleServiceAccountEmail: clientEmail,
+      hasOpenAiKey: !!process.env.OPENAI_API_KEY,
+      openAiKeyPrefix: process.env.OPENAI_API_KEY ? `${process.env.OPENAI_API_KEY.slice(0, 7)}...` : "未設定"
     });
   });
 
