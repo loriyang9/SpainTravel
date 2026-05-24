@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 import crypto from 'crypto';
 
 // Google Sheets configuration
-const SPREADSHEET_ID = '1V5NSXukzD5z2m-07AhcMkU6fWEPchO4lIN8KzpI7Lwo';
+const SPREADSHEET_ID = '1Rjoi6LZxkxOiIKCTGQ3rWEl0-7AHA03VJQcBwY3rUX4';
 
 class GoogleSheetsService {
   private sheets: any;
