@@ -27,9 +27,14 @@ interface AttractionWithCoords extends Attraction {
 const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const googleMapRef = useRef<google.maps.Map | null>(null);
+  const leafletMapInstanceRef = useRef<any>(null);
+  
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [isLeafletLoaded, setIsLeafletLoaded] = useState(false);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [mapCenter, setMapCenter] = useState<MapCenter>({ lat: 41.3851, lng: 2.1734, source: 'default' }); // Default to Barcelona
+
+  const hasGoogleKey = !!import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   // Fetch attractions data
   const { data: attractions, isLoading } = useQuery<Attraction[]>({
@@ -252,9 +257,9 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
     }
   };
 
-  // Load Google Maps Script
+  // Load Map Scripts (Google Maps or Leaflet)
   useEffect(() => {
-    const loadGoogleMaps = () => {
+    if (hasGoogleKey) {
       if (window.google && window.google.maps) {
         setIsMapLoaded(true);
         return;
@@ -270,12 +275,35 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
       };
       
       document.head.appendChild(script);
-    };
+    } else {
+      // Load Leaflet CSS
+      if (!document.getElementById('leaflet-css')) {
+        const link = document.createElement('link');
+        link.id = 'leaflet-css';
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(link);
+      }
 
-    loadGoogleMaps();
+      // Load Leaflet JS
+      if ((window as any).L) {
+        setIsLeafletLoaded(true);
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.async = true;
+      script.onload = () => setIsLeafletLoaded(true);
+      script.onerror = () => {
+        console.error('無法載入 Leaflet 腳本');
+      };
+
+      document.head.appendChild(script);
+    }
   }, []);
 
-  // Geocode attraction using Google Places API
+  // Geocode attraction using Google Places API (Only for Google Maps)
   const geocodeAttraction = async (attraction: Attraction): Promise<AttractionWithCoords> => {
     if (!window.google || !window.google.maps) {
       return attraction;
@@ -286,7 +314,6 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
       document.createElement('div')
     );
 
-    // 嘗試使用 Places API 獲得更精確的結果
     try {
       const request = {
         query: `${attraction.nameEn || attraction.name}, ${attraction.city}, Spain`,
@@ -315,7 +342,6 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
       console.warn(`Places API 查詢失敗：${attraction.name}，嘗試使用 Geocoding API`);
     }
 
-    // 備用方案：使用 Geocoding API
     try {
       const results = await new Promise<google.maps.GeocoderResult[]>((resolve, reject) => {
         geocoder.geocode(
@@ -345,7 +371,7 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
     return attraction;
   };
 
-  // Create custom marker icon
+  // Create custom marker icon (For Google Maps)
   const createMarkerIcon = (icon: string): google.maps.Icon => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -355,7 +381,6 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
     canvas.height = size;
 
     if (ctx) {
-      // 繪製圓形背景
       ctx.fillStyle = '#ffffff';
       ctx.strokeStyle = '#2563EB';
       ctx.lineWidth = 3;
@@ -364,7 +389,6 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
       ctx.fill();
       ctx.stroke();
 
-      // 繪製圖標文字
       ctx.font = '18px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -379,12 +403,53 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
     };
   };
 
-  // Initialize map and add markers
+  // Get coords for Leaflet Map when Google API is not loaded
+  const getAttractionLeafletCoords = (attraction: any, index: number) => {
+    const name = attraction.name || '';
+    if (name.includes('巴特婁')) return { lat: 41.3917, lng: 2.1649 };
+    if (name.includes('米拉之家')) return { lat: 41.3954, lng: 2.1619 };
+    if (name.includes('聖家堂')) return { lat: 41.4036, lng: 2.1744 };
+    if (name.includes('桂爾')) return { lat: 41.4145, lng: 2.1527 };
+    if (name.includes('波格利亞') || name.includes('Boqueria')) return { lat: 41.3817, lng: 2.1716 };
+    if (name.includes('聖卡特林納')) return { lat: 41.3862, lng: 2.1785 };
+    if (name.includes('蒙塞拉特') || name.includes('Montserrat')) return { lat: 41.5933, lng: 1.8373 };
+    if (name.includes('大教堂') && attraction.city === '薩拉曼卡') return { lat: 40.9607, lng: -5.6661 };
+    if (name.includes('Casa Lis')) return { lat: 40.9599, lng: -5.6672 };
+    if (name.includes('阿穆德納')) return { lat: 40.4156, lng: -3.7146 };
+    if (name.includes('皇宮') || name.includes('王宮')) return { lat: 40.4173, lng: -3.7143 };
+    if (name.includes('麗池')) return { lat: 40.4153, lng: -3.6845 };
+    if (name.includes('太陽門')) return { lat: 40.4169, lng: -3.7038 };
+    if (name.includes('聖米格爾')) return { lat: 40.4154, lng: -3.7090 };
+    if (name.includes('托雷多') && name.includes('教堂')) return { lat: 39.8571, lng: -4.0244 };
+    
+    const city = attraction.city || '';
+    let baseCoords = { lat: 41.3851, lng: 2.1734 }; // Barcelona
+    if (city.includes('馬德里') || city.includes('Madrid')) {
+      baseCoords = { lat: 40.4168, lng: -3.7038 };
+    } else if (city.includes('薩拉曼卡') || city.includes('Salamanca')) {
+      baseCoords = { lat: 40.9701, lng: -5.6635 };
+    } else if (city.includes('托雷多') || city.includes('Toledo')) {
+      baseCoords = { lat: 39.8628, lng: -4.0273 };
+    } else if (city.includes('菲格拉斯') || city.includes('Figueras')) {
+      baseCoords = { lat: 42.2664, lng: 2.9632 };
+    } else if (city.includes('台北') || city.includes('Taipei')) {
+      baseCoords = { lat: 25.0330, lng: 121.5654 };
+    }
+    
+    // Spiral spread to prevent overlap
+    const angle = index * 0.5;
+    const radius = 0.003 + (index * 0.0003);
+    return {
+      lat: baseCoords.lat + Math.sin(angle) * radius,
+      lng: baseCoords.lng + Math.cos(angle) * radius
+    };
+  };
+
+  // Google Maps Initialization Effect
   useEffect(() => {
-    if (!isMapLoaded || !mapRef.current || !attractions || attractions.length === 0) return;
+    if (!hasGoogleKey || !isMapLoaded || !mapRef.current || !attractions || attractions.length === 0) return;
 
     const initMap = async () => {
-      // 初始化地圖，使用智能中心點
       const map = new window.google.maps.Map(mapRef.current!, {
         zoom: mapCenter.source === 'user' ? 10 : 6,
         center: { lat: mapCenter.lat, lng: mapCenter.lng },
@@ -402,16 +467,9 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
       });
 
       googleMapRef.current = map;
-
-      // 建立資訊窗口
       const infoWindow = new window.google.maps.InfoWindow();
-
-      // 為所有景點進行地理編碼並添加標記
-      console.log('開始處理景點位置查詢...', attractions.length, '個景點');
-      
       const geocodePromises = attractions.map(attraction => geocodeAttraction(attraction));
       const geocodedAttractions = await Promise.all(geocodePromises);
-
       const bounds = new window.google.maps.LatLngBounds();
       let markersAdded = 0;
 
@@ -420,7 +478,6 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
           const icon = getCategoryIcon(attraction.category);
           const markerIcon = createMarkerIcon(icon);
           
-          // 建立標記
           const marker = new window.google.maps.Marker({
             position: { lat: attraction.lat, lng: attraction.lng },
             map: map,
@@ -428,9 +485,7 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
             icon: markerIcon
           });
 
-          // 添加點擊監聽器顯示資訊窗口
           marker.addListener('click', () => {
-            // 建立 Google Maps 連結 - 搜尋景點名稱和城市
             const queryString = `${attraction.name},${attraction.city}`;
             const googleMapsUrl = `https://maps.google.com/maps?q=${encodeURIComponent(queryString)}`;
             const categoryColor = getCategoryColor(attraction.category);
@@ -465,41 +520,117 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
 
           bounds.extend({ lat: attraction.lat, lng: attraction.lng });
           markersAdded++;
-        } else {
-          console.warn(`無法定位景點：${attraction.name} (${attraction.city})`);
         }
       });
 
-      // 根據智能中心邏輯決定是否調整地圖視野
       if (markersAdded > 0) {
-        // 只有在用戶位置模式下才自動調整視野以包含所有標記
         if (mapCenter.source === 'user') {
           map.fitBounds(bounds);
-          // 避免過度放大單一標記
           const listener = window.google.maps.event.addListener(map, 'idle', () => {
             if (map.getZoom()! > 15) map.setZoom(15);
             window.google.maps.event.removeListener(listener);
           });
         } else {
-          // 保持智能中心點和預設縮放等級
           map.setCenter({ lat: mapCenter.lat, lng: mapCenter.lng });
           map.setZoom(mapCenter.source === 'itinerary' ? 8 : 6);
         }
-        
-        console.log(`成功添加 ${markersAdded} 個景點標記到地圖`);
-      } else {
-        console.warn('沒有找到任何有效的景點位置');
       }
     };
 
     initMap().catch(console.error);
   }, [isMapLoaded, attractions, mapCenter]);
 
+  // Leaflet Map Initialization Effect (Runs when Google Key is missing)
+  useEffect(() => {
+    if (hasGoogleKey || !isLeafletLoaded || !mapRef.current || !attractions || attractions.length === 0) return;
+
+    if (leafletMapInstanceRef.current) {
+      leafletMapInstanceRef.current.remove();
+    }
+
+    const L = (window as any).L;
+    if (!L) return;
+
+    const map = L.map(mapRef.current).setView([mapCenter.lat, mapCenter.lng], mapCenter.source === 'user' ? 10 : 6);
+    leafletMapInstanceRef.current = map;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const markersGroup = L.featureGroup();
+
+    attractions.forEach((attraction, idx) => {
+      const coords = getAttractionLeafletCoords(attraction, idx);
+      const icon = getCategoryIcon(attraction.category);
+      const categoryColor = getCategoryColor(attraction.category);
+
+      const customIcon = L.divIcon({
+        html: `
+          <div style="
+            width: 32px; 
+            height: 32px; 
+            background: #ffffff; 
+            border: 2px solid ${categoryColor}; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-size: 16px;
+          ">
+            ${icon}
+          </div>
+        `,
+        className: '',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+
+      const marker = L.marker([coords.lat, coords.lng], { icon: customIcon });
+      const queryString = `${attraction.name},${attraction.city}`;
+      const googleMapsUrl = `https://maps.google.com/maps?q=${encodeURIComponent(queryString)}`;
+
+      marker.bindPopup(`
+        <div style="max-width: 250px; font-family: system-ui, -apple-system, sans-serif; padding: 4px;">
+          <h3 style="margin: 0 0 4px 0; color: #1f2937; font-size: 15px; font-weight: 600;">
+            ${attraction.name}
+          </h3>
+          ${attraction.nameEn ? `<p style="margin: 0 0 6px 0; color: #6b7280; font-size: 12px; font-style: italic;">${attraction.nameEn}</p>` : ''}
+          <div style="background: ${categoryColor}; color: white; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; font-size: 11px; margin-bottom: 8px; gap: 4px; font-weight: 500;">
+            <span>${icon}</span>
+            <span>${attraction.category}</span>
+          </div>
+          <p style="margin: 6px 0; font-size: 12px; line-height: 1.4; color: #374151;">
+            ${attraction.description}
+          </p>
+          <div style="border-top: 1px solid #e5e7eb; padding-top: 6px; margin-top: 8px; font-size: 12px; color: #6b7280; display: flex; justify-content: space-between; align-items: center;">
+            <span>📍 ${attraction.city}</span>
+            <a href="${googleMapsUrl}" target="_blank" style="background: #2563EB; color: white; padding: 4px 8px; border-radius: 12px; text-decoration: none; font-size: 11px; font-weight: 500;">
+              🗺️ Maps
+            </a>
+          </div>
+        </div>
+      `);
+
+      marker.addTo(map);
+      markersGroup.addLayer(marker);
+    });
+
+    if (mapCenter.source === 'user') {
+      map.fitBounds(markersGroup.getBounds(), { padding: [30, 30] });
+    } else {
+      map.setView([mapCenter.lat, mapCenter.lng], mapCenter.source === 'itinerary' ? 8 : 6);
+    }
+  }, [isLeafletLoaded, attractions, mapCenter]);
+
   // Update map center when mapCenter changes
   useEffect(() => {
     if (googleMapRef.current && mapCenter) {
       googleMapRef.current.setCenter({ lat: mapCenter.lat, lng: mapCenter.lng });
       googleMapRef.current.setZoom(mapCenter.source === 'user' ? 10 : 6);
+    } else if (leafletMapInstanceRef.current && mapCenter) {
+      leafletMapInstanceRef.current.setView([mapCenter.lat, mapCenter.lng], mapCenter.source === 'user' ? 10 : 6);
     }
   }, [mapCenter]);
 
@@ -515,33 +646,17 @@ const DynamicMap = ({ height = 500, className = "" }: DynamicMapProps) => {
     );
   }
 
-
-  if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-    return (
-      <div 
-        className={`flex items-center justify-center bg-red-50 rounded-lg border border-red-200 ${className}`}
-        style={{ height }}
-        data-testid="map-error"
-      >
-        <div className="text-red-600 text-center">
-          <p className="font-semibold">Google Maps API 金鑰未設定</p>
-          <p className="text-sm">請設定 VITE_GOOGLE_MAPS_API_KEY 環境變數</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className={`rounded-lg overflow-hidden shadow-lg ${className}`} data-testid="dynamic-map">
+    <div className={`rounded-lg overflow-hidden shadow-lg relative ${className}`} data-testid="dynamic-map">
       <div 
         ref={mapRef} 
         style={{ height, width: '100%' }}
         className="bg-muted/20"
         data-testid="map-container"
       />
-      {!isMapLoaded && (
+      {!isMapLoaded && !isLeafletLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-muted/20">
-          <div className="text-muted-foreground">載入 Google Maps 中...</div>
+          <div className="text-muted-foreground">載入地圖中...</div>
         </div>
       )}
     </div>
