@@ -97,6 +97,10 @@ class GoogleSheetsService {
             case 'dinner':
               dayData.dinner = cellValue;
               break;
+            case 'Summary':
+            case 'summary':
+              dayData.summary = cellValue;
+              break;
           }
         }
 
@@ -170,7 +174,7 @@ class GoogleSheetsService {
           dayNumber,
           date: overview.date || activities[0].date || '',
           title: overview.theme || this.extractDayTitle(activities), // Use Theme from DailyItinerary
-          description: await this.generateDaySummary(dayNumber, overview.theme || '', overview.city || '', activities, totalDays),
+          description: overview.summary || await this.generateDaySummary(dayNumber, overview.theme || '', overview.city || '', activities, totalDays),
           city: overview.city || '', // Use City from DailyItinerary only
           activities: activities.map(act => ({
             time: act.time || '全天',
