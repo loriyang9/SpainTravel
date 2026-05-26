@@ -50,7 +50,7 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      staleTime: 5000, // Refresh data frequently so Google Sheet updates show up
       retry: false,
     },
     mutations: {
